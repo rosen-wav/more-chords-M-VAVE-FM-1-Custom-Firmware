@@ -1,0 +1,1964 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only
+     Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+     Copyright (C) 2026 ChoralRoot FM-1 contributors (a fork of Felucca) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>more chords! · FM1 installer</title>
+<style>
+  @font-face { font-family: "Inter Tight"; src: url(../../InterTight.woff2) format("woff2");
+               font-weight: 100 900; font-display: swap; }
+  :root { --ground: #080808; --cream: #F6F2EE; --red: #E63829; --orange: #F67918;
+          --grey: #6A696A; --dark: #313031; --dim: #9A999A; }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body { margin: 0; background: var(--ground); color: var(--cream);
+         font: 400 17px/1.5 "Inter Tight", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 24px 16px 64px; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--orange); }
+  .home { display: inline-block; font-size: 14px; font-weight: 600; color: var(--dim); text-decoration: none; margin-bottom: 40px; }
+  .home:hover { color: var(--cream); }
+  h1 { font-size: clamp(40px, 12vw, 64px); font-weight: 900; letter-spacing: -0.045em; line-height: .95; margin: 0; }
+  .nw { white-space: nowrap; }
+  .sub { margin: 12px 0 0; font-size: 15px; font-weight: 600; color: var(--dim); letter-spacing: -0.01em; }
+  .stripes { display: grid; gap: 5px; margin: 24px 0 40px; }
+  .stripes i { display: block; height: 10px; }
+  .stripes i:nth-child(1) { background: var(--red); }
+  .stripes i:nth-child(2) { background: var(--orange); }
+  .stripes i:nth-child(3) { background: var(--cream); }
+  p { margin: 0 0 16px; }
+  .lead { font-size: 21px; font-weight: 600; line-height: 1.35; letter-spacing: -0.015em; }
+  .small { color: var(--dim); font-size: 14px; }
+  button { font: inherit; border: 0; border-radius: 2px; cursor: pointer; }
+  button:disabled { opacity: .3; cursor: default; }
+  #go { display: block; width: 100%; margin: 32px 0 0; padding: 20px 24px; background: var(--red); color: #fff;
+        font-size: 24px; font-weight: 800; letter-spacing: -0.02em; text-align: left; }
+  #stock-go, #backup-go, #restore-go, #snd-read { padding: 12px 20px; background: var(--cream); color: #000; font-weight: 700; }
+  .check { display: flex; gap: 10px; align-items: baseline; margin: 16px 0 0; color: var(--dim); font-size: 14px; cursor: pointer; }
+  .check input { accent-color: var(--red); }
+  section.bk { margin-top: 56px; border-top: 3px solid var(--dark); padding-top: 20px; }
+  h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 16px; }
+  progress { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 8px; margin: 16px 0 0;
+             border: 0; background: var(--dark); color: var(--cream); }
+  progress::-webkit-progress-bar { background: var(--dark); }
+  progress::-webkit-progress-value { background: var(--cream); }
+  progress::-moz-progress-bar { background: var(--cream); }
+  #status { margin: 16px 0 0; min-height: 1.5em; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  pre { color: var(--grey); font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        white-space: pre-wrap; margin: 12px 0 0; max-height: 240px; overflow: auto; }
+  pre:empty { display: none; }
+  details { margin-top: 56px; border-top: 3px solid var(--dark); padding-top: 20px; }
+  summary { cursor: pointer; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .warn { color: var(--cream); font-weight: 700; border-left: 6px solid var(--red); padding-left: 12px; }
+  input[type=file] { margin-top: 8px; color: var(--dim); font: inherit; font-size: 14px; max-width: 100%; }
+  input[type=file]::file-selector-button { font: inherit; font-weight: 700; border: 0; border-radius: 2px;
+             background: var(--dark); color: var(--cream); padding: 8px 14px; margin-right: 12px; cursor: pointer; }
+  .snd-wrap { margin: 16px 0 0; overflow-x: auto; }
+  table.snd { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .snd th { text-align: left; color: var(--dim); font-weight: 600; padding: 0 6px 6px; border-bottom: 1px solid var(--dark); }
+  .snd td { padding: 4px 6px; border-bottom: 1px solid var(--dark); vertical-align: middle; }
+  .snd td.n { font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--dim); }
+  .snd td.a { white-space: nowrap; text-align: right; }
+  .snd tr.empty td { color: var(--grey); }
+  .snd button { padding: 3px 8px; margin: 2px 0 2px 4px; background: var(--dark); color: var(--cream); font-size: 13px; font-weight: 700; }
+  .snd button:not(:disabled):hover { background: var(--cream); color: #000; }
+  footer { margin-top: 64px; padding-top: 20px; border-top: 3px solid var(--dark); }
+  footer p { color: var(--dim); font-size: 13px; }
+
+  :root { --ground:#0a0b0a; --cream:#f2f2e9; --red:#c6ef72; --orange:#e9faab; --dark:#292d27; --dim:#a8aea2; }
+  body { background:radial-gradient(ellipse at 85% 0%,#202b17 0,transparent 42%),var(--ground); }
+  main { max-width:760px; padding:36px 28px 72px; }
+  h1 { font-size:clamp(64px,15vw,106px); letter-spacing:-.065em; }
+  .home { margin-bottom:32px; }
+  .origin { margin-top:14px; font-size:14px; color:var(--dim); }
+  .release { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+  .pill { border:1px solid #414b37; border-radius:30px; padding:5px 12px; font-size:11px; letter-spacing:.06em; }
+  .stripes { grid-template-columns:3fr 1fr 1fr; gap:4px; margin:26px 0 30px; }
+  .stripes i { height:4px; }.stripes i:nth-child(2){background:#748965}.stripes i:nth-child(3){background:#333d2d}
+  #go { color:#16200e; border-radius:12px; margin-top:26px; }
+  button { border-radius:8px; }button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #c6ef72;outline-offset:4px}
+  #status { padding:12px 0; font-size:16px; } .log-detail{margin-top:8px;border-top:1px solid var(--dark);padding-top:10px}.log-detail summary{font-size:13px;color:var(--dim)}
+  section.bk { margin-top:40px; padding-top:26px; border-top:1px solid #3a4035; }
+  h2,summary { letter-spacing:-.02em; } .snd-wrap { border:1px solid var(--dark); border-radius:8px; }
+  .snd th,.snd td{padding:9px 8px}.warn{border-color:#bdccaa}footer{border-top:1px solid var(--dark)}
+  @media(max-width:480px){main{padding:24px 18px 48px}#go{font-size:20px}.lead{font-size:19px}}
+</style>
+</head>
+<body>
+<main>
+  <a class="home" href="../../">← more chords!</a>
+  <h1>more<br>chords!</h1>
+  <p class="sub">A ChoralRoot remix by rosen · M-VAVE FM1</p>
+  <p class="origin">Built on <a href="https://github.com/Quixotic7/ChoralRootFM1" target="_blank" rel="noopener">ChoralRoot by u/Quixotic7</a> and contributors.</p>
+  <div class="release"><span class="pill">RELEASE <b id="release-version"></b></span><span class="pill">FM-1_920</span></div>
+  <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+  <p class="lead" data-t="intro"></p>
+  <p data-t="warn"></p>
+  <p class="small" data-t="direct"></p>
+  <p class="small" data-t="over"></p>
+  <p class="small" data-t="beta"></p>
+  <p class="small" data-t="brick"></p>
+  <p class="small" data-t="backupFirst"></p>
+  <button id="go" disabled data-t="install"></button>
+  <label class="check"><input id="skip-backup" type="checkbox"><span data-t="skipBackup"></span></label>
+  <label class="check" id="force-box" hidden><input id="force-risk" type="checkbox"><span data-t="forceRisk"></span></label>
+  <progress id="bar" max="100" value="0"></progress>
+  <p id="status" role="status" aria-live="polite"></p>
+  <details class="log-detail"><summary>Technical log</summary><pre id="log"></pre></details>
+  <details id="dark">
+    <summary data-t="darkTitle"></summary>
+    <p class="small" data-t="darkCable"></p>
+    <p class="small" data-t="darkText"></p>
+    <p class="small"><a href="https://github.com/Quixotic7/MvaveFM1Unbricker" target="_blank" rel="noopener">github.com/Quixotic7/MvaveFM1Unbricker</a></p>
+    <p class="small" data-t="darkTransporter"></p>
+    <p class="small"><a href="https://github.com/kurogedelic/FM-1-transporter" target="_blank" rel="noopener">github.com/kurogedelic/FM-1-transporter</a></p>
+  </details>
+  <section class="bk">
+    <h2 data-t="bkTitle"></h2>
+    <p class="small" data-t="bkText"></p>
+    <p class="small" data-t="bkAcross"></p>
+    <p><button id="backup-go" disabled data-t="backupGo"></button></p>
+    <p><label><span data-t="restoreFile"></span><br><input id="restore-file" type="file" accept=".json,application/json"></label></p>
+    <p><button id="restore-go" disabled data-t="restoreGo"></button></p>
+  </section>
+  <section class="bk" id="sounds">
+    <h2 data-t="sndTitle"></h2>
+    <p class="small" data-t="sndText"></p>
+    <p class="small" data-t="sndAll"></p>
+    <p class="small" data-t="sndSyxText"></p>
+    <p><button id="snd-read" disabled data-t="sndReadGo"></button></p>
+    <input id="snd-file" type="file" accept=".json,.syx,application/json" hidden>
+    <div class="snd-wrap">
+      <table class="snd" id="snd-table" hidden>
+        <thead><tr><th data-t="sndColSlot"></th><th data-t="sndColName"></th><th data-t="sndColEngine"></th><th data-t="sndColPatch"></th><th data-t="sndColPool"></th><th></th></tr></thead>
+        <tbody id="snd-rows"></tbody>
+      </table>
+    </div>
+  </section>
+  <details>
+    <summary data-t="stockTitle"></summary>
+    <p class="warn" data-t="stockWarn"></p>
+    <p class="small" data-t="back"></p>
+    <p class="small"><a href="https://www.m-vave.com/download" target="_blank" rel="noopener">M-VAVE Downloads</a></p>
+    <p><label><span data-t="stockFile"></span><br><input id="stock-file" type="file" accept=".fwsc"></label></p>
+    <label class="check"><input id="stock-recovery" type="checkbox"><span data-t="stockRecovery"></span></label>
+    <p><button id="stock-go" disabled data-t="stockGo"></button></p>
+  </details>
+  <footer>
+    <p><span data-t="license"></span> <a href="https://github.com/Quixotic7/ChoralRootFM1" target="_blank" rel="noopener">github.com/Quixotic7/ChoralRootFM1</a></p>
+    <p>Remix by rosen. <a href="../../source/more-chords-v48-source.zip">Download corresponding source</a> · <a href="../../release.json">Release manifest</a>.</p>
+    <p>ChoralRoot by u/Quixotic7 and contributors. Melodee by Kerem Kilic / Ellic Studio; ORBIT and Monk contributors. Individual engine notices remain in the source.</p>
+    <p>Built on Felucca by Leo Kuroshita (@kurogedelic), <a href="https://hugelton.com" target="_blank" rel="noopener">Hügelton Instruments</a>:
+      <a href="https://github.com/hugelton/Felucca" target="_blank" rel="noopener">github.com/hugelton/Felucca</a>.</p>
+    <p>Font: Inter Tight (The Inter Project Authors, SIL OFL 1.1).
+      FM6 engine: msfa from Dexed (Google, Pascal Gauthier, Apache-2.0). PHYS engine: DaisySP (Electrosmith, Emilie Gillet) and Rings (Emilie Gillet), MIT.
+      The package also holds three JieLi AC79 SDK files, uboot.boot, cfg_tool.bin and eq_cfg_hw.bin (JieLi Technology, Apache-2.0).</p>
+    <p><a href="../../firmware/LICENSING.md">Licences</a>: <a href="../../firmware/LICENSE">GPL-3.0</a>,
+      <a href="../../firmware/LICENSES/Apache-2.0.txt">Apache-2.0</a>, <a href="../../firmware/LICENSES/">all</a>.</p>
+    <p>M-VAVE and FM-1 are trademarks of their respective owners. ChoralRoot is not affiliated with Telepathic Instruments, M-VAVE or Cuvave.</p>
+  </footer>
+</main>
+<script type="module">
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+//
+// FM-1 .fwsc packages in the browser: the package identity and the image the
+// device reads during an update.
+
+const BLOCKS = 20, BLK = 0x30, KEEP = 0x2F;
+const STOCK_V15_SHA256 = "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a";
+const STOCK_APP_SIZE = 0x8DFBC;
+const STOCK_V15_SIZE = 699956;
+
+const T = new Uint16Array(256);
+for (let i = 0; i < 256; i++) {
+  let c = i << 8;
+  for (let k = 0; k < 8; k++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1;
+  T[i] = c & 0xFFFF;
+}
+
+function crc16(d, crc = 0) {
+  for (let i = 0; i < d.length; i++) crc = ((crc << 8) & 0xFFFF) ^ T[((crc >> 8) ^ d[i]) & 0xFF];
+  return crc;
+}
+
+function enc(buf, off, size, key = 0xFFFF) {
+  for (let i = 0; i < size; i++) {
+    buf[off + i] ^= key & 0xFF;
+    key = ((key * 2) ^ (key & 0x8000 ? 0x1021 : 0)) & 0xFFFF;
+  }
+}
+
+function sfc(buf, off, size, base, key) {
+  for (let i = 0; i < size; i += 32) enc(buf, off + i, Math.min(size - i, 32), key ^ ((off + i - base) >> 2));
+}
+
+function chipkeyDecode(d) {
+  let sum = 0;
+  for (let i = 0; i < 16; i++) sum += d[i];
+  sum &= 0xFF;
+  sum = sum >= 0xE0 ? 0xAA : sum <= 0x10 ? 0x55 : sum;
+  let k = 0;
+  for (let i = 0; i < 16; i++) if ((d[16 + i] ^ d[15 - i]) < sum) k |= 1 << i;
+  return k;
+}
+
+const align32 = (v) => (v + 31) & ~31;
+const u16 = (b, o) => b[o] | (b[o + 1] << 8);
+const u32 = (b, o) => (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0;
+function w16(b, o, v) { b[o] = v & 0xFF; b[o + 1] = (v >> 8) & 0xFF; }
+function w32(b, o, v) { w16(b, o, v & 0xFFFF); w16(b, o + 2, (v >>> 16) & 0xFFFF); }
+
+class Entry {                                   // JLFS head, 32 bytes
+  constructor(raw, off) {
+    this.hdrOff = off;
+    this.hcrc = u16(raw, off);
+    this.dcrc = u16(raw, off + 2);
+    this.offset = u32(raw, off + 4);
+    this.size = u32(raw, off + 8);
+    this.flags = raw[off + 12];
+    this.resvd = raw[off + 13];
+    this.index = u16(raw, off + 14);
+    this.rawName = raw.slice(off + 16, off + 32);
+    const z = this.rawName.indexOf(0);
+    this.name = String.fromCharCode(...this.rawName.slice(0, z < 0 ? 16 : z));
+    if (crc16(raw.subarray(off + 2, off + 32)) !== this.hcrc) throw new Error(`JLFS header CRC mismatch @${off.toString(16)}`);
+  }
+  packInto(buf) {
+    const o = this.hdrOff;
+    w16(buf, o + 2, this.dcrc); w32(buf, o + 4, this.offset); w32(buf, o + 8, this.size);
+    buf[o + 12] = this.flags; buf[o + 13] = this.resvd; w16(buf, o + 14, this.index);
+    buf.set(this.rawName, o + 16);
+    this.hcrc = crc16(buf.subarray(o + 2, o + 32));
+    w16(buf, o, this.hcrc);
+  }
+}
+
+class Package {
+  constructor(bytes) {
+    this.raw = new Uint8Array(bytes);
+    this.parseUfw();
+    this.flash = this.raw.slice(this.flashFileOff, this.flashFileOff + this.flashSize);
+    this.parseFlash();
+  }
+
+  get product() { return productOf(this.raw); }
+
+  setProduct(name) {
+    if (name.length > BLOCKS) throw new Error("product name too long");
+    for (let i = 0; i < BLOCKS; i++) {
+      const m = i < name.length ? (name.charCodeAt(i) + i + 1) & 0xFF : 0x7D;
+      if (i < name.length && m === 0x7D) throw new Error("product name encodes to the unused marker");
+      this.raw[i * BLK + KEEP] = m;
+    }
+  }
+
+  headerBytes() {
+    const h = new Uint8Array(BLOCKS * KEEP);
+    for (let i = 0; i < BLOCKS; i++) h.set(this.raw.subarray(i * BLK, i * BLK + KEEP), i * KEEP);
+    return h;
+  }
+
+  hdrFileOff(i) { return Math.floor(i / KEEP) * BLK + (i % KEEP); }
+
+  parseUfw() {
+    const h = this.headerBytes();
+    enc(h, 0, 0x40);
+    const hcrc = u16(h, 0), lcrc = u16(h, 2), nent = u16(h, 8);
+    if (crc16(h.subarray(2, 0x40)) !== hcrc) throw new Error("not an FM-1 .fwsc (UFW header CRC mismatch)");
+    this.skew = BLOCKS * BLK - h.length;
+    this.ufw = h;
+    this.nent = nent;
+    const hsize = 0x40 + nent * 0x50;
+    if (crc16(h.subarray(0x40, hsize)) !== lcrc) throw new Error("UFW entry list CRC mismatch");
+    this.entries = [];
+    for (let off = 0x40; off < hsize; off += 0x50) {
+      const e = h.slice(off, off + 0x50);
+      enc(e, 0, 0x50);
+      const z = e.subarray(0x40, 0x50).indexOf(0);
+      this.entries.push({ off, type: u16(e, 0), dcrc: u16(e, 4), dataOff: u32(e, 8), size: u32(e, 12),
+        name: String.fromCharCode(...e.subarray(0x40, z < 0 ? 0x50 : 0x40 + z)), plain: e });
+    }
+    const fl = this.entries.find((e) => e.type === 0);
+    if (!fl) throw new Error("no flash.bin in the package");
+    this.flashEntry = fl;
+    this.flashFileOff = fl.dataOff + this.skew;
+    this.flashSize = fl.size;
+    if (crc16(this.raw.subarray(this.flashFileOff, this.flashFileOff + fl.size)) !== fl.dcrc) throw new Error("flash.bin CRC mismatch");
+  }
+
+  parseFlash() {
+    const dec = this.flash.slice();
+    const h = dec.slice(0, 32);
+    enc(h, 0, 32);
+    if (crc16(h.subarray(2, 32)) !== u16(h, 0)) throw new Error("flash header CRC mismatch");
+    this.chipKey = null; this.appBase = null;
+    for (let off = 32; ; off += 32) {
+      enc(dec, off, 32);
+      const e = new Entry(dec, off);
+      if (e.name === "isd_config.ini") {
+        const blob = dec.subarray(e.offset, e.offset + 34);
+        if (crc16(blob.subarray(0, 32)) === u16(blob, 32)) this.chipKey = chipkeyDecode(blob.subarray(0, 32));
+      }
+      if (e.flags === 0x81 && e.name === "app_dir_head" && this.appBase === null) this.appBase = e.offset;
+      if (e.index) break;
+    }
+    if (this.chipKey === null || this.appBase === null) throw new Error("chip key or app_dir_head not found");
+    const b = this.appBase, k = this.chipKey, end = align32(b + 32);
+    sfc(dec, b, end - b, b, k);
+    const head = new Entry(dec, b);
+    const blkEnd = b + head.size;
+    if (blkEnd > end) sfc(dec, end, blkEnd - end, b, k);
+    this.sfcEnd = Math.max(end, blkEnd);
+    this.cfgLen = 0;
+    const probe = this.flash.slice(b, align32(blkEnd) + 32);
+    sfc(probe, 0, probe.length, 0, k);
+    try {
+      const cfg = new Entry(probe, blkEnd - b);
+      if (cfg.name === "cfg" && blkEnd + cfg.size <= this.flash.length) this.cfgLen = cfg.size;
+    } catch (_) { /* no cfg block */ }
+    if (this.cfgLen) {
+      const region = this.flash.slice(b, blkEnd + this.cfgLen);
+      sfc(region, 0, region.length, 0, k);
+      dec.set(region, b);
+      this.sfcEnd = blkEnd + this.cfgLen;
+    }
+    this.head = head;
+    this.app = null;
+    for (let off = b + 32; ; off += 32) {
+      const e = new Entry(dec, off);
+      if (e.flags === 0x82 && e.name === "app.bin") this.app = e;
+      if (e.index) break;
+    }
+    if (!this.app) throw new Error("app.bin not found in app area");
+    this.appOff = b + this.app.offset;
+    this.dec = dec;
+  }
+
+  // the new app, padded to the stock size (Felucca never changes the layout)
+  setApp(app) {
+    if (app.length > this.app.size) throw new Error(`app is ${app.length} B, the slot is ${this.app.size} B`);
+    const nw = new Uint8Array(this.app.size).fill(0xFF);
+    nw.set(app);
+    const a = this.app, h = this.head, b = this.appBase;
+    this.dec.set(nw, this.appOff);
+    a.dcrc = crc16(nw);
+    a.packInto(this.dec);
+    h.dcrc = crc16(this.dec.subarray(h.hdrOff + 32, h.hdrOff + h.size));
+    h.packInto(this.dec);
+    this.sfcEnd = Math.max(align32(b + 32), b + h.size + this.cfgLen);
+    const region = this.dec.slice(b, this.sfcEnd);
+    sfc(region, 0, region.length, 0, this.chipKey);
+    this.flash.set(region, b);
+  }
+
+  serialize() {
+    const out = this.raw.slice();
+    out.set(this.flash, this.flashFileOff);
+    const fl = this.flashEntry, e = fl.plain.slice();
+    w16(e, 4, crc16(this.flash));
+    enc(e, 0, 0x50);
+    const h = this.ufw.slice();
+    h.set(e, fl.off);
+    const hsize = 0x40 + this.nent * 0x50;
+    w16(h, 2, crc16(h.subarray(0x40, hsize)));
+    w16(h, 0, crc16(h.subarray(2, 0x40)));
+    enc(h, 0, 0x40);
+    for (let i = 0; i < hsize; i++) out[this.hdrFileOff(i)] = h[i];
+    return out;
+  }
+}
+
+// the package identity ("FM-1_904"): one marker byte after each of the first 20 blocks
+function productOf(fwsc) {
+  if (fwsc.length < BLOCKS * BLK) throw new Error("not an FM-1 package (too short)");
+  let s = "";
+  for (let i = 0; i < BLOCKS; i++) {
+    const m = fwsc[i * BLK + KEEP];
+    if (m !== 0x7D) s += String.fromCharCode((m - i - 1) & 0xFF);
+  }
+  return s;
+}
+
+// the image the device addresses during an update: the .fwsc without the 20 marker bytes
+function logicalImage(fwsc) {
+  const out = new Uint8Array(fwsc.length - BLOCKS);
+  for (let i = 0; i < BLOCKS; i++) out.set(fwsc.subarray(i * BLK, i * BLK + KEEP), i * KEEP);
+  out.set(fwsc.subarray(BLOCKS * BLK), BLOCKS * KEEP);
+  return out;
+}
+
+async function sha256hex(bytes) {
+  const d = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(d)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+// Only the user's unmodified official V15 is accepted for a return to stock.
+// The digest pins every file, loader and flash layout; filenames are not evidence.
+async function validateStockPackage(bytes) {
+  if (bytes.length !== STOCK_V15_SIZE || await sha256hex(bytes) !== STOCK_V15_SHA256)
+    throw new Error("Select the unmodified official FM-1 V15 file (FM-1.fwsc).");
+  const pkg = new Package(bytes);
+  if (pkg.product !== "FM-1_015" || pkg.flashFileOff !== 1044 || pkg.flashSize !== 602112 ||
+      pkg.appBase !== 16384 || pkg.appOff !== 16672 || pkg.app.size !== STOCK_APP_SIZE ||
+      !pkg.entries.some((e) => e.type === 100 && e.name === "ota.bin" && e.size === 19969))
+    throw new Error("The official firmware has an unsupported FM-1 layout.");
+  return { product: pkg.product, image: logicalImage(bytes), sha256: STOCK_V15_SHA256 };
+}
+
+// official V15 + Felucca app -> installable package (Uint8Array)
+async function buildFeluccaPackage(stockBytes, appBytes, product) {
+  const sha = await sha256hex(stockBytes);
+  if (sha !== STOCK_V15_SHA256) throw new Error("this is not the official FM-1 V15 firmware file (FM-1.fwsc)");
+  const pkg = new Package(stockBytes);
+  pkg.setApp(appBytes);
+  pkg.setProduct(product);
+  return pkg.serialize();
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+//
+// The FM-1 USB-MIDI update protocol over WebMIDI (after tools/fm1_install.py).
+// Step 1: the running firmware (official
+// or Felucca) reads parts of the package and stages the update loader. Step 2:
+// the loader reads the whole image and writes it. Both steps are "the device
+// asks, we answer": cmd 0x30 read requests on the logical image.
+
+const HS_QUERY = [0xF0, 0x00, 0x32, 0x45, 0x00, 0x00, 0x00, 0x40, 0x7F, 0xF7];
+const UPGRADE = [0xF0, 0x22, 0x24, 0x35, 0x7F, 0xF7];
+const MAXDATA = 512;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const IS_OTA = (id) => /^ota-/i.test(id.model);
+
+// errors carry a code the pages translate: notfound, model, stopped, noloader, lost, noreturn,
+// mismatch (detail: the identity the device reports), badreq
+function fail(code, msg, detail = "") { const e = new Error(msg); e.code = code; e.detail = detail; return e; }
+
+function pack7(data) {
+  const out = []; let acc = 0, nb = 0;
+  for (const b of data) {
+    acc |= b << nb; nb += 8;
+    while (nb >= 7) { out.push(acc & 0x7F); acc >>>= 7; nb -= 7; }
+  }
+  if (nb) out.push(acc & 0x7F);
+  return out;
+}
+
+function unpack7(s) {
+  const out = []; let acc = 0, nb = 0;
+  for (const b of s) {
+    acc |= (b & 0x7F) << nb; nb += 7;
+    while (nb >= 8) { out.push(acc & 0xFF); acc >>>= 8; nb -= 8; }
+  }
+  return out;
+}
+
+function response(addr, data, fl = 0) {
+  const len = data.length;
+  const body = [0x00, 0x59, 0x30, (len + 8) & 0xFF, ((len + 8) >> 8) & 0xFF, 0, fl,
+    addr & 0xFF, (addr >>> 8) & 0xFF, (addr >>> 16) & 0xFF, (addr >>> 24) & 0xFF,
+    len & 0xFF, (len >> 8) & 0xFF, 0, ...data];
+  let s = 0;
+  for (let i = 6; i < body.length; i++) s += body[i];
+  body.push(~s & 0xFF);
+  return [0xF0, ...pack7(body), 0xF7];
+}
+
+function parseRequest(pkt) {
+  if (pkt[0] !== 0xF0 || pkt[pkt.length - 1] !== 0xF7) return null;
+  const u = unpack7(pkt.slice(1, -1));
+  if (u.length !== 15 || u[0] !== 0 || u[1] !== 0x59 || u[2] !== 0x30) return null;
+  let s = 0;
+  for (let i = 6; i < 14; i++) s += u[i];
+  if ((~s & 0xFF) !== u[14]) return null;
+  return { fl: u[6], addr: (u[7] | (u[8] << 8) | (u[9] << 16) | (u[10] << 24)) >>> 0, len: u[11] | (u[12] << 8) | (u[13] << 16) };
+}
+
+function parseIdentity(pkt) {
+  const d = unpack7(pkt.slice(1, -1));
+  if (d.length !== 34 || d[0] !== 0 || d[1] !== 0x59 || d[2] !== 0x11) return null;
+  const txt = String.fromCharCode(...d.slice(6, 33)).replace(/\0+$/, "");
+  const m = /^([^_]+)_(\d+)$/.exec(txt);
+  return m ? { text: txt, model: m[1], version: parseInt(m[2], 10) } : null;
+}
+
+// ---- which firmware runs: may ChoralRoot be installed over it? (docs/INSTALL-COMPAT.md; tools/fm1_install.py
+// classify_firmware is the same table). identity: the handshake text ("FM-1_015", "FM-1_910"); info: the version the
+// backup protocol's INFO answers ("FELUCCA v1.0", "MELODEE v0.11.1", "ChoralRoot 0.12"), null when it does not answer.
+// -> { verdict: "allow" | "refuse" | "loader", kind, name }. The 9xx identities are shared by every Felucca-based
+// firmware (FM-1_9XY from the release number: Felucca 0.9-beta FM-1_909, Felucca 1.0 FM-1_910, Sloop 2.0 FM-1_920 =
+// ChoralRoot's), so they are told apart by the INFO text only.
+const RECOVERY_URL = "https://github.com/Quixotic7/MvaveFM1Unbricker";
+function classifyFirmware(identity, info) {
+  const m = /^(ota-)?([^_]+)_(\d+)$/i.exec(identity || "");
+  const v = (info || "").trim();
+  if (!m) return { verdict: "refuse", kind: "unknown", name: `an unknown firmware (${identity || "no identity"})` };
+  if (m[1]) return { verdict: "loader", kind: "loader", name: identity };            // update mode: resume
+  const num = parseInt(m[3], 10);
+  if (m[2] !== "FM-1") return { verdict: "refuse", kind: "unknown", name: identity };
+  if (num >= 1 && num < 100) return { verdict: "allow", kind: "stock", name: `the official M-VAVE firmware (${identity})` };
+  if (num === 0) return { verdict: "refuse", kind: "sloop", name: "Sloop's rescue mode (FM-1_000)" };
+  if (num < 900) return { verdict: "refuse", kind: "unknown", name: `an unknown firmware (${identity})` };
+  if (/^choralroot\b/i.test(v)) return { verdict: "allow", kind: "choralroot", name: v };
+  if (/^melodee\b/i.test(v)) return { verdict: "allow", kind: "melodee", name: `Melodee (${v.slice(8)})` };
+  if (/sloop/i.test(v)) return { verdict: "refuse", kind: "sloop", name: "Sloop" };
+  const f = /^felucca\s+(v)?(\d+)\.(\d+)(\S*)$/i.exec(v);
+  // Felucca 1.0 and later: "v1.0", "v1.0.1", "v1.1-rc1" (build.py "v" + release); the 0.x betas: "0.9-BETA", "0.5 BETA"
+  if (f && parseInt(f[2], 10) >= 1 && !/beta/i.test(v) && (f[1] || !f[4]))
+    return { verdict: "allow", kind: "felucca", name: `Felucca ${f[1] || "v"}${f[2]}.${f[3]}${f[4]}` };
+  if (/^felucca\b/i.test(v)) return { verdict: "refuse", kind: "felucca-beta", name: `a Felucca beta or a firmware based on one (${v})` };
+  return { verdict: "refuse", kind: "unknown", name: v ? `an unknown firmware (${identity}, ${v})` : `an unknown Felucca-based firmware (${identity})` };
+}
+function refusalText(name) {
+  return `Installing over ${name} is not supported: ${REFUSE_REASON} ` +
+    `Return to the official V15 firmware with the installer you used for ${name} first, then install ChoralRoot. ` +
+    `If an FM-1 is already dark (black screen, a "WL82 UBOOT1.00" USB disk): ${RECOVERY_URL}`;
+}
+const REFUSE_REASON = "An install over it has left an FM-1 that no longer starts, and the data it leaves in the flash is not known to be safe for ChoralRoot.";
+
+// one MIDI in/out pair with a SysEx queue
+class Link {
+  constructor(input, output) {
+    this.input = input; this.output = output; this.q = []; this.waiter = null;
+    input.onmidimessage = (ev) => {
+      if (ev.data[0] !== 0xF0) return;
+      this.q.push(Array.from(ev.data));
+      if (this.waiter) { const w = this.waiter; this.waiter = null; w(); }
+    };
+  }
+  get lost() { return this.input.state === "disconnected" || this.output.state === "disconnected"; }
+  // false when the port is gone (unplugged): WebMIDI throws on a disconnected output
+  send(bytes) {
+    try { this.output.send(bytes); return true; } catch (_) { return false; }
+  }
+  drain() { this.q.length = 0; }
+  async read(ms) {
+    if (!this.q.length) {
+      let tm;
+      await Promise.race([new Promise((r) => { this.waiter = r; }), new Promise((r) => { tm = setTimeout(r, ms); })]);
+      clearTimeout(tm);
+      this.waiter = null;
+    }
+    return this.q.shift() || null;
+  }
+  close() { this.input.onmidimessage = null; }
+}
+
+async function handshake(link, tries = 3) {
+  link.drain();
+  for (let t = 0; t < tries; t++) {
+    if (!link.send(HS_QUERY)) return null;
+    const end = Date.now() + 1000;
+    while (Date.now() < end) {
+      const p = await link.read(end - Date.now());
+      if (!p) break;
+      const id = parseIdentity(p);
+      if (id) return id;
+    }
+  }
+  return null;
+}
+
+class Updater {
+  constructor(access, log) {
+    this.access = access;
+    this.log = log || (() => {});
+  }
+
+  // every in/out pair with the same port name that answers the handshake
+  async find(filter) {
+    const outs = [...this.access.outputs.values()];
+    for (const input of this.access.inputs.values()) {
+      if (input.state === "disconnected") continue;
+      if (!/fm-1|felucca|ota|composite|sinco|usb-midi/i.test(input.name || "")) continue;   // never probe other gear
+      const output = outs.find((o) => o.name === input.name && o.state !== "disconnected");
+      if (!output) continue;
+      try { await input.open(); await output.open(); } catch (_) { continue; }
+      const link = new Link(input, output);
+      const id = await handshake(link, 2);
+      if (id && (!filter || filter(id))) return { link, id, name: input.name };
+      link.close();
+    }
+    return null;
+  }
+
+  async waitFor(filter, ms) {
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      const dev = await this.find(filter);
+      if (dev) return dev;
+      await sleep(1000);
+    }
+    return null;
+  }
+
+  // serve read requests until the device asks for one of the finish addresses; stops early
+  // when the port disappears (lost: true) instead of waiting out idleMs
+  async serve(link, image, finishAddr, idleMs, onProgress) {
+    let served = 0, last = Date.now();
+    for (;;) {
+      const pkt = await link.read(1000);
+      if (!pkt) {
+        if (link.lost) return { served, finished: false, lost: true };
+        if (Date.now() - last > idleMs) return { served, finished: false };
+        continue;
+      }
+      const r = parseRequest(pkt);
+      if (!r) continue;
+      last = Date.now();
+      if (r.addr === 0xE0000000 || r.addr === 0xF0000000) {
+        link.send(response(r.addr, [...new TextEncoder().encode("success"), 0]));
+        if (r.addr === finishAddr) return { served, finished: true };
+        continue;
+      }
+      if (r.len > MAXDATA || r.addr + r.len > image.length) throw fail("badreq", `bad request ${r.addr.toString(16)}+${r.len}`);
+      await sleep(10);
+      if (!link.send(response(r.addr, Array.from(image.subarray(r.addr, r.addr + r.len)), r.fl))) {
+        return { served, finished: false, lost: true };
+      }
+      served++;
+      if (onProgress) onProgress(served, r.addr);
+    }
+  }
+
+  // full install: running firmware -> loader -> new firmware
+  async install(image, product, onStep) {
+    const step = onStep || (() => {});
+    const dev = await this.find((id) => !IS_OTA(id));
+    if (!dev) throw fail("notfound", "FM-1 not found (USB cable, and no other app using it?)");
+    const [model] = product.split("_");
+    if (dev.id.model !== model) { dev.link.close(); throw fail("model", `the device is ${dev.id.text}, the package is for ${product}`); }
+    step("start", dev.id.text);
+    dev.link.send(UPGRADE);
+    await sleep(2000);
+    const s1 = await this.serve(dev.link, image, 0xE0000000, 8000, (n) => step("verify", n));
+    dev.link.close();
+    if (!s1.finished) throw fail(s1.lost ? "lost" : "stopped", `the device ${s1.lost ? "was disconnected" : "stopped"} after ${s1.served} requests: nothing was written`);
+    step("loader");
+    await sleep(3000);
+    const ota = await this.waitFor((id) => id.model === "ota-" + model, 30000);
+    if (!ota) throw fail("noloader", "the update loader did not appear. Replug the USB cable and press Install again: the device stays in update mode until it is finished.");
+    const s2 = await this.write(ota, image, step);
+    if (!s2.finished) throw fail(s2.lost ? "lost" : "stopped", `the loader ${s2.lost ? "was disconnected" : "stopped"} after ${s2.served} requests. Replug and press Install again to resume.`);
+    step("reboot");
+    await sleep(3000);
+    const back = await this.waitFor((id) => !IS_OTA(id), 40000);
+    if (!back) throw fail("noreturn", "the device did not come back: power-cycle it");
+    back.link.close();
+    if (back.id.text !== product) throw fail("mismatch", `installed, but the device reports ${back.id.text}`, back.id.text);
+    step("done", back.id.text);
+    return back.id.text;
+  }
+
+  // step 2 with the loader found by find()/waitFor()
+  async write(ota, image, step) {
+    ota.link.send(UPGRADE);
+    await sleep(2000);
+    const s2 = await this.serve(ota.link, image, 0xF0000000, 180000, (n) => step("write", n));
+    ota.link.close();
+    return s2;
+  }
+
+  // resume: the device is already in update mode (loader) -> true when the write finished
+  async resume(image, onStep, product = null) {
+    const model = product && product.split("_")[0];
+    const ota = await this.find((id) => model ? id.model === "ota-" + model : IS_OTA(id));
+    if (!ota) return false;
+    const step = onStep || (() => {});
+    const result = await this.write(ota, image, step);
+    if (!result.finished) return false;
+    if (product) {
+      step("reboot");
+      await sleep(3000);
+      const back = await this.waitFor((id) => id.model === model, 40000);
+      if (!back) throw fail("noreturn", "The FM-1 did not return after resuming the write.");
+      back.link.close();
+      if (back.id.text !== product) throw fail("mismatch", "The FM-1 reports a different firmware after resuming.", back.id.text);
+      step("done", back.id.text);
+    }
+    return true;
+  }
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
+// Copyright (C) 2026 ChoralRoot FM-1 contributors (a fork of Felucca)
+// Local, complete archives. Requests name whitelisted objects, never flash addresses (web/EDITOR_PROTOCOL.md).
+// One file format ("felucca-backup" version 1) for every firmware that speaks the protocol; each firmware lists its
+// own objects (BACKUP_LIST) and a restore writes the objects of the file that the connected firmware lists:
+//   Felucca     0 the music now, 1 settings, 2..5 projects, 6 7 user preset banks, 8 the FM6 bank, 32..34 samples
+//   ChoralRoot  1 settings, 6 7 user sound banks, 8 the FM6 bank, 9 the VA patches, 10 11 the FM6 patches (user sounds
+//               1-16, 17-32: voice + function settings), 12 13 the CZ-1 tones (user sounds 1-16, 17-32), 14..21 the
+//               CZ-1 banks A..H, 22 the QUAD patches (0.14), 40..59 loop slots (no samples: the
+//               all-synth firmware has no SAMPLE engine; ChoralRoot 0.1 archives with 32 33 restore without them)
+// so a Felucca archive restores its settings, banks and FM6 bank on ChoralRoot (its samples are reported skipped), and
+// a ChoralRoot archive those (its settings record cut back to Felucca's) on Felucca; the rest stays in the file.
+const BACKUP_IDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 32, 33, 34];   // Felucca's archive (8: the FM6 patch bank)
+const BACKUP_IDS_V1 = BACKUP_IDS.filter((id) => id !== 8);              // Felucca before FM6, and its archives
+const idsOf = (n) => (n === BACKUP_IDS.length ? BACKUP_IDS : n === BACKUP_IDS_V1.length ? BACKUP_IDS_V1 : null);
+const CR_LOOP_IDS = Array.from({ length: 30 }, (_, k) => 40 + k);
+const CR_CZ_BANK_IDS = Array.from({ length: 8 }, (_, k) => 14 + k);
+const CR_BACKUP_IDS = [1, 6, 7, 8, 9, 10, 11, 12, 13, ...CR_CZ_BANK_IDS, 22, ...CR_LOOP_IDS, 70, 71];  // ChoralRoot's (9:
+                                         // the VA patches, 10 11: the FM6 patches, 12 13: the CZ-1 tones, 14..21: the
+                                         // CZ-1 banks, 22: the QUAD patches, 40..59: loops)
+const KNOWN = new Set([...BACKUP_IDS, ...CR_BACKUP_IDS]);
+const BACKUP_CMD = { INFO: 1, LIST: 65, GET: 66, PUT: 67, RESTART: 72 };
+const BACKUP_CHUNK = 256;
+const isSample = (id) => id >= 32 && id <= 34;
+const maxSize = (id) => (isSample(id) || !KNOWN.has(id) ? 81920 : 3840);
+function objectName(id) {
+  if (id === 0) return "current music";
+  if (id === 1) return "settings";
+  if (id >= 2 && id <= 5) return `project ${id - 1}`;
+  if (id === 6 || id === 7) return `user sounds ${id === 6 ? "1-16" : "17-32"}`;
+  if (id === 70 || id === 71) return `user sounds ${id===70?"33-48":"49-64"}`;
+  if (id === 8) return "FM6 patch bank";
+  if (id === 9) return "VA patches";
+  if (id === 10 || id === 11) return `FM6 patches ${id === 10 ? "1-16" : "17-32"}`;
+  if (id === 12 || id === 13) return `CZ-1 tones ${id === 12 ? "1-16" : "17-32"}`;
+  if (id >= 14 && id <= 21) return `CZ-1 bank ${String.fromCharCode(51 + id)}`;
+  if (id === 22) return "QUAD patches";
+  if (isSample(id)) return `sample slot ${id - 31}`;
+  if (id >= 40 && id <= 69) return `loop slot ${id - 39}`;
+  return `object ${id}`;
+}
+const bkU32 = (n) => Array.from({ length: 5 }, (_, i) => (n >>> (i * 7)) & (i === 4 ? 15 : 127));
+const bkR32 = (a, off = 0) => {
+  if (a.length < off + 5 || a[off + 4] > 15) throw new Error("Invalid archive number");
+  return (a[off] | a[off + 1] << 7 | a[off + 2] << 14 | a[off + 3] << 21 | a[off + 4] << 28) >>> 0;
+};
+function bkPack(bytes) {
+  const a = [];
+  for (let off = 0; off < bytes.length; off += 7) {
+    const chunk = bytes.subarray(off, off + 7);
+    a.push(chunk.reduce((m, b, i) => m | (b >>> 7) << i, 0), ...chunk.map((b) => b & 127));
+  }
+  return a;
+}
+function bkUnpack(a, size) {
+  const out = new Uint8Array(size); let i = 0, j = 0;
+  while (j < size) {
+    const n = Math.min(7, size - j), mask = a[i++];
+    if (mask == null || mask >>> n) throw new Error("Invalid archive bytes");
+    for (let k = 0; k < n; k++) {
+      if (a[i] == null || a[i] > 127) throw new Error("Short archive chunk");
+      out[j++] = a[i++] | (mask >>> k & 1) << 7;
+    }
+  }
+  if (i !== a.length) throw new Error("Trailing archive bytes");
+  return out;
+}
+function bkCrc(bytes) {
+  let c = 0xffffffff;
+  for (const b of bytes) {
+    c ^= b;
+    for (let k = 0; k < 8; k++) c = c >>> 1 ^ (c & 1 ? 0xedb88320 : 0);
+  }
+  return (~c) >>> 0;
+}
+const BK_RC = { 1: "Invalid archive object", 2: "Archive data failed validation", 3: "Stop playback first (the loop on the FM-1)",
+  4: "Flash write failed", 5: "Start a fresh backup" };
+function bkCheck(rc) {
+  if (rc) { const e = new Error(BK_RC[rc] || `Archive error ${rc}`); e.rc = rc; throw e; }
+}
+// BACKUP_LIST's reply -> [{id, size, crc}]: any firmware's list (distinct ids; Felucca's, ChoralRoot's or unknown ones)
+function bkManifest(a) {
+  if (a[0] !== 1) throw new Error("Unsupported archive protocol");
+  bkCheck(a[1]);
+  const n = a[2];
+  if (!n || a.length !== 3 + n * 11) throw new Error("Incomplete archive manifest");
+  const seen = new Set();
+  return Array.from({ length: n }, (_, i) => {
+    const p = 3 + i * 11, id = a[p];
+    if (seen.has(id)) throw new Error("Unexpected archive object");
+    seen.add(id);
+    const size = bkR32(a, p + 1), crc = bkR32(a, p + 6);
+    if (size > maxSize(id) || (!size && crc)) throw new Error("Archive object too large");
+    return { id, size, crc };
+  });
+}
+const bkBase64 = (bytes) => { let s = ""; for (const b of bytes) s += String.fromCharCode(b); return btoa(s); };
+const backupFamily = (firmware) => (/^choralroot/i.test(firmware || "") ? "choralroot" : /^felucca/i.test(firmware || "") ? "felucca" : "other");
+function readBackup(file) {
+  if (typeof file === "string") file = JSON.parse(file);
+  if (!file || file.format !== "felucca-backup" || file.version !== 1 || !Array.isArray(file.objects) || !file.objects.length)
+    throw new Error("Not a complete FM-1 backup");
+  const felucca = backupFamily(file.firmware) === "felucca", ids = idsOf(file.objects.length), seen = new Set();
+  if (felucca && (!ids || file.objects.some((o, i) => !o || o.id !== ids[i])))   // Felucca writes its whole set, in order
+    throw new Error("Not a complete Felucca backup");
+  const objects = file.objects.map((o) => {
+    if (!o || !Number.isInteger(o.id) || o.id < 0 || o.id > 127 || seen.has(o.id) || !Number.isInteger(o.size) || o.size < 0 ||
+        o.size > maxSize(o.id) || !Number.isInteger(o.crc) || o.crc < 0 || o.crc > 0xffffffff || typeof o.data !== "string" ||
+        o.data.length !== 4 * Math.ceil(o.size / 3) || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(o.data))
+      throw new Error("Invalid backup object");
+    seen.add(o.id);
+    const bytes = Uint8Array.from(atob(o.data), (c) => c.charCodeAt(0));
+    if (bytes.length !== o.size || bkCrc(bytes) !== o.crc) throw new Error("Backup checksum mismatch");
+    if (isSample(o.id) && o.size) {
+      if (o.size < 512) throw new Error("Short sample backup");
+      const view = new DataView(bytes.buffer), length = view.getUint32(16, true), count = bytes[6];
+      if (view.getUint32(0, true) !== 0x504d5346 || view.getUint16(4, true) !== 1 || !count || count > 16 ||
+          length !== o.size - 512 || bkCrc(bytes.subarray(512)) !== view.getUint32(20, true)) throw new Error("Invalid sample backup");
+      for (let z = 0; z < count; z++) {
+        const off = 32 + z * 28, start = view.getUint32(off,true), n = view.getUint32(off+4,true),
+          ls = view.getUint32(off+8,true), le = view.getUint32(off+12,true), rate = view.getUint32(off+16,true);
+        if (!n || start > length || Math.ceil(n/2) > length - start || n > 163840 || ls > le || le >= n ||
+            !rate || rate > 262144 || bytes[off+24] > 88 || bytes[off+25] > bytes[off+26]) throw new Error("Invalid sample zone");
+      }
+    }
+    return { ...o, bytes };
+  });
+  const by = new Map(objects.map((o) => [o.id, o]));
+  if ((by.has(0) && !by.get(0).size) || (felucca && !by.get(1).size)) throw new Error("Backup is missing the current music or settings");
+  if (!objects.some((o) => o.size)) throw new Error("The backup holds nothing");
+  return { ...file, objects };
+}
+async function captureBackup(request, firmware, onProgress = () => {}) {
+  const manifest = bkManifest(await request([BACKUP_CMD.LIST, []], { timeout: 3000, retries: 0 }));
+  const objects = [], total = manifest.reduce((n, o) => n + o.size, 0); let done = 0;
+  for (const o of manifest) {
+    const bytes = new Uint8Array(o.size);
+    for (let off = 0; off < o.size; off += BACKUP_CHUNK) {
+      const size = Math.min(BACKUP_CHUNK, o.size - off);
+      const a = await request([BACKUP_CMD.GET, [o.id, ...bkU32(off), size & 127, size >>> 7]], { timeout: 1000, retries: 1 });
+      bkCheck(a[1]);
+      if (a[0] !== o.id || bkR32(a, 2) !== off || (a[7] | a[8] << 7) !== size) throw new Error("Unexpected backup reply");
+      bytes.set(bkUnpack(a.slice(9), size), off);
+      done += size; onProgress(done, total);
+    }
+    if (bkCrc(bytes) !== o.crc) throw new Error("The device changed during backup. Try again while stopped.");
+    objects.push({ ...o, data: bkBase64(bytes) });
+  }
+  const file = { format: "felucca-backup", version: 1, firmware, created: new Date().toISOString(), objects };
+  readBackup(file); return file;
+}
+// the settings record across firmwares: ChoralRoot's (PER5) is Felucca's (PER4) + its own 192-byte block at the end
+const PER4 = 0x50455234, PER5 = 0x50455235, CR_BLOCK = 192;
+function adaptObject(o, dev) {
+  if (o.id !== 1 || !dev.size || o.size === dev.size || o.size !== dev.size + CR_BLOCK) return o;
+  const view = new DataView(o.bytes.buffer, o.bytes.byteOffset, o.size);
+  if (view.getUint32(0, true) !== PER5) return o;
+  const bytes = o.bytes.slice(0, dev.size);
+  new DataView(bytes.buffer).setUint32(0, PER4, true);
+  return { ...o, bytes, size: bytes.length, crc: bkCrc(bytes), converted: true };
+}
+const bkSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// restore the objects of `file` that the connected firmware lists; opts.onBusy() while the FM-1 answers busy (a loop
+// plays: rc 3, retried each second, opts.busyTries times). -> the archive with restored / skipped ids
+async function restoreBackup(request, file, onProgress = () => {}, opts = {}) {
+  const archive = readBackup(file); // Validate every byte before the first destructive request.
+  const device = new Map(bkManifest(await request([BACKUP_CMD.LIST, []], { timeout: 3000, retries: 0 })).map((o) => [o.id, o]));
+  const plan = archive.objects.filter((o) => device.has(o.id)).map((o) => adaptObject(o, device.get(o.id)));
+  const skipped = archive.objects.filter((o) => !device.has(o.id)).map((o) => o.id), restored = [];
+  const total = plan.reduce((n, o) => n + o.size, 0); let done = 0;
+  const busyTries = opts.busyTries ?? 120;
+  const ask = async (r, o = {}) => request(r, { timeout: 4000, retries: 0, ...o });
+  const retry = async (f) => {
+    for (let i = 0; ; i++) {
+      try { return await f(); }
+      catch (e) { if (e.rc !== 3 || i >= busyTries) throw e; if (opts.onBusy) opts.onBusy(); await bkSleep(1000); }
+    }
+  };
+  const put = async (args) => { const a = await ask([BACKUP_CMD.PUT, args]); bkCheck(a[2]); return a; };
+  // Restore the live music last, the settings before it. Objects commit one by one; a disconnect can leave a partial restore.
+  const order = [...plan.filter((o) => o.id > 1), ...plan.filter((o) => o.id === 1), ...plan.filter((o) => o.id === 0)];
+  for (const o of order) {
+    if (isSample(o.id)) {
+      const slot = o.id - 32;
+      const check = (a) => { if (a[0] !== slot) throw new Error("Unexpected sample reply"); bkCheck(a.at(-1)); };
+      if (!o.size) await retry(async () => check(await ask([14, [slot]])));
+      else {
+        await retry(async () => check(await ask([11, [slot]])));
+        for (let off = 512; off < o.size; off += BACKUP_CHUNK) {
+          const chunk = o.bytes.subarray(off, off + BACKUP_CHUNK);
+          await retry(async () => check(await ask([12, [slot, off & 127, off >>> 7 & 127, off >>> 14 & 127, ...bkPack(chunk)]])));
+          done += chunk.length; onProgress(done, total);
+        }
+        await retry(async () => check(await ask([13, [slot, ...bkPack(o.bytes.subarray(0, 480))]])));
+        done += 512; onProgress(done, total);
+      }
+    } else {
+      try { await retry(() => put([0, o.id, ...bkU32(o.size), ...bkU32(o.crc)])); }
+      catch (e) { if (o.converted && e.rc === 1) { skipped.push(o.id); continue; } throw e; }
+      try {
+        for (let off = 0; off < o.size; off += BACKUP_CHUNK) {
+          const chunk = o.bytes.subarray(off, off + BACKUP_CHUNK);
+          await put([1, o.id, ...bkU32(off), ...bkPack(chunk)]);
+          done += chunk.length; onProgress(done, total);
+        }
+        await retry(() => put([2, o.id]));
+      } catch (e) {
+        await put([3, o.id]).catch(() => {});
+        if (o.converted && e.rc === 2) { skipped.push(o.id); continue; }   // another firmware's settings: best effort
+        throw e;
+      }
+    }
+    restored.push(o.id);
+  }
+  return { ...archive, restored, skipped };
+}
+// INFO -> {version, family}; null when the firmware does not answer (stock, an update loader)
+async function deviceInfo(request) {
+  let a;
+  try { a = await request([BACKUP_CMD.INFO, []], { timeout: 1500, retries: 0 }); } catch (_) { return null; }
+  const end = a.indexOf(0), version = String.fromCharCode(...a.slice(0, end < 0 ? a.length : end));
+  return { version, family: backupFamily(version) };
+}
+// ChoralRoot: restart after a restore, so everything restored loads from flash (its settings wait for it)
+async function restartDevice(request) {
+  const a = await request([BACKUP_CMD.RESTART, []], { timeout: 2000, retries: 0 });
+  bkCheck(a[0]);
+}
+const backupFileName = (firmware, date = new Date()) =>
+  `${backupFamily(firmware) === "other" ? "fm1" : backupFamily(firmware)}-backup-${date.toISOString().slice(0, 10).replace(/-/g, "")}.json`;
+
+// Installer connection: no editor page or watcher owns this input simultaneously.
+class BackupConnection {
+  constructor(input, output) {
+    this.input = input; this.output = output; this.pending = null;
+    input.onmidimessage = (e) => {
+      const d = e.data;
+      if (d.length < 6 || d[0] !== 240 || d[1] !== 125 || d[2] !== 70 || d[3] !== 76 || d.at(-1) !== 247) return;
+      if (this.pending?.cmd === d[4]) { const p = this.pending; this.pending = null; clearTimeout(p.timer); p.resolve(Array.from(d.slice(5, -1))); }
+    };
+  }
+  async request([cmd, args], opt = {}) {
+    if (this.pending || this.closed || this.input.state === "disconnected" || this.output.state === "disconnected") throw new Error("Backup connection closed or busy");
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { this.pending = null; reject(new Error("Backup timed out. Keep the FM-1 connected and stopped.")); }, opt.timeout || 1200);
+      this.pending = { cmd, timer, resolve, reject };
+      try { this.output.send([240, 125, 70, 76, cmd, ...args, 247]); }
+      catch (e) { clearTimeout(timer); this.pending = null; reject(e); }
+    });
+  }
+  close() {
+    this.closed = true; this.input.onmidimessage = null;
+    if (this.pending) { const p = this.pending; this.pending = null; clearTimeout(p.timer); p.reject(new Error("Backup connection closed")); }
+  }
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// UPX layout 1, kept in sync with firmware/src/user_ext.c.
+const SCHEMA = [[0,127,104],[0,127,10],[0,127,70],[0,127,90],[0,127,60],[-64,63,0],[-64,63,0],[-64,63,0],[-64,63,0],[0,127,60],[0,4,0],[0,127,0],[0,127,0],[-64,63,0],[-64,63,0],[-64,63,0],[0,127,0],[0,6,0],[0,9,2],[1,4,1],[1,127,64],[0,100,0],[0,127,127],[0,1,0],[0,1,0],[0,11,0],[0,15,0],[0,3,0],[-24,24,0],[1,64,16],[0,9,2],[0,100,0],[1,127,64],[0,127,0],[0,127,0],[0,127,0],[0,127,0],[0,3,0],[0,127,0],[-64,63,0],[0,1,0],[0,1,0],[0,2,0],[0,1,0],[0,127,40],[0,2,0],[1,16,1],[0,5,1],[0,127,127],[0,8,0],[0,19,0],[-64,63,0],[0,8,0],[0,19,0],[-64,63,0],[0,8,0],[0,19,0],[-64,63,0],[0,8,0],[0,19,0],[-64,63,0],[0,127,0],[0,127,0],[0,127,127],[0,127,0],[0,127,127],[0,127,0],[0,127,0],[0,127,127],[0,127,0],[0,127,127],[0,127,0],[0,127,0],[0,127,127],[0,127,0],[0,127,127],[0,127,0],[0,127,0],[0,127,127],[0,127,0],[0,127,127],[0,9,0],[0,4,0]];
+const sizes={12:128,13:110,14:144,15:80};
+const extKind={12:'fm6',13:'va',14:'cz',15:'quad'};
+const val=(r,k)=>{
+ if(r[2]===24&&k>=r[3]-8&&r[158]===67&&r[159]===76){const a=128+2*(k-r[3]+8);return new DataView(r.buffer,r.byteOffset).getInt16(a,true);}
+ if(r[2]===19&&k===r[3]-1&&r[158]===77&&r[159]===57)return r[156]|r[157]<<7;
+ return r[1]>=4?r[16+k]-64:r[16+k]<128?r[16+k]:r[16+k]-256;
+};
+function set(r,k,v){
+ if(r[2]===24&&k>=83){new DataView(r.buffer).setInt16(128+2*(k-83),v,true);r[158]=67;r[159]=76;v=0;}
+ if(r[2]===19&&k===90){v=Math.max(0,Math.min(16383,v));r.set([v&127,v>>7,77,57],156);v=Math.min(127,v);}
+ r[16+k]=(v+64)&255;
+}
+const width=(lo,hi)=>hi===lo?0:32-Math.clz32(hi-lo);
+function bits(p,at,n,v){let x=0;for(let j=0;j<n;j++){const byte=(at+j)>>3,mask=1<<((at+j)&7);if(v===undefined){if(p[byte]&mask)x|=1<<j;}else if(v&(1<<j))p[byte]|=mask;else p[byte]&=~mask;}return x;}
+function extDecode(p){
+ const r=new Uint8Array(192);if(!p||p.length!==240||!p[0])return {record:r,patch:new Uint8Array(0)};
+ if(p[0]!==165||p[1]!==1||p[3]!==91)throw Error('Unknown extended USER record');
+ r.set(p.subarray(0,16));r[1]=4;r[175]=p[16];r[191]=p[17];let at=144;
+ SCHEMA.forEach(([lo,hi],k)=>{const n=width(lo,hi),v=bits(p,at,n);at+=n;if(v>hi-lo)throw Error('Invalid extended USER parameter');set(r,k,lo+v);});
+ const view=new DataView(p.buffer,p.byteOffset,p.byteLength);for(let k=0;k<8;k++)set(r,83+k,view.getInt16(77+2*k,true));
+ const n=p[93];if(n>144)throw Error('Invalid extended USER patch length');let patch=p.slice(94,94+n);
+ if(r[2]===16&&n===53){r.set(patch,107);patch=new Uint8Array(0);}else if(n&&n!==sizes[r[2]])throw Error('Wrong native patch');
+ return {record:r,patch};
+}
+function extEncode(r,patch=new Uint8Array(0)){
+ const p=new Uint8Array(240);if(!r||!r[0])return p;
+ if(r.length!==192||![1,2,4].includes(r[1])||r[3]<8||r[3]>144)throw Error('Save this legacy sound on the FM-1 before moving it to U33..U64');
+ if(r.slice(160,175).some(x=>x)||r.slice(176,191).some(x=>x))throw Error('U33..U64 store sounds, not legacy Felucca patterns');
+ p.set(r.subarray(0,16));p[1]=1;p[3]=91;p[16]=r[175];p[17]=r[191];let at=144;const nc=r[3]-8;
+ SCHEMA.forEach(([lo,hi,def],k)=>{const v=k<nc?val(r,k):def;if(v<lo||v>hi)throw Error('USER parameter out of range');const n=width(lo,hi);bits(p,at,n,v-lo);at+=n;});
+ const view=new DataView(p.buffer);for(let k=0;k<8;k++)view.setInt16(77+2*k,val(r,nc+k),true);
+ if(r[2]===16&&r[158]===80&&r[159]===53)patch=r.slice(107,160);
+ if(patch.length>144||(patch.length&&!(r[2]===16&&patch.length===53)&&patch.length!==sizes[r[2]]))throw Error('Wrong native USER patch');
+ p[93]=patch.length;p.set(patch,94);return p;
+}
+function extGet(m,slot){const p=m.get(70+Math.floor((slot-33)/16)),at=((slot-33)%16)*240;return extDecode(p?.length===3840?p.subarray(at,at+240):null);}
+function extPut(m,slot,r,patch){const id=70+Math.floor((slot-33)/16);if(!m.has(id))throw Error('Update firmware for U33..U64');if(patch===undefined)patch=extGet(m,slot).patch;const old=m.get(id),p=old?.length===3840?old.slice():new Uint8Array(3840);p.set(extEncode(r,patch),((slot-33)%16)*240);m.set(id,p);}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (C) 2026 ChoralRoot FM-1 contributors (a fork of Felucca)
+// ChoralRoot's user sounds as files (docs/SOUNDS.md): the 32 slots U01..U64 read from the backup objects that hold
+// them (6 7 the banks, 9 the VA patch store, 10 11 the FM6 patch store, 12 13 the CZ-1 tone store, 22 the QUAD patch
+// store: firmware 0.14 on, read when the FM-1 lists it), one slot exported
+// to a "choralroot-sound" file, a file imported into a slot, a slot renamed or deleted, as new object bytes; only the
+// objects that changed are written back (the stores first, the bank last), each as a restore writes it (fm1backup.js).
+// Pure: no DOM, no MIDI (the requests go through the caller's request function, as captureBackup's).
+
+
+const SOUND_IDS = [6, 7, 9, 10, 11, 12, 13, 22, 70, 71];
+const SOUND_IDS_OPTIONAL = [22,70,71];                 // (an older ChoralRoot has no QUAD store: read as empty)
+const SOUND_SLOTS = 64;
+const ENGINE_NAMES = ["ANALOG", "DIGITAL", "PHASE", "LOFI", "SAMPLE", "VOICE", "TRIO", "WHEEL", "GRAIN", "PHYS",
+  "DRUM", "NOISE", "FM6", "VA", "CZ-1", "QUAD", "PROPHET", "RESERVED", "BASS", "Morph", "RETIRED KR106", "RETIRED CS-1", "CLOUD", "SWARM", "CLUSTER", "DRIFT", "WAVE TERRAIN", "RETIRED GRAIN FORMANT"];
+const PATCH_SIZE = { va: 110, fm6: 128, cz: 144, quad: 80 };
+const SOUND_FORMAT = "choralroot-sound";
+const patchKindOf = (engine) =>
+  (engine === 13 ? "va" : engine === 12 ? "fm6" : engine === 14 ? "cz" : engine === 15 ? "quad" : null);
+
+// the factory presets of each engine (ENGINES[e]->presets[k].name) and the first of them in the engine's pool (the
+// CZ-1's preset 0, INIT TONE, is the pool's INIT): tests/sound_templates.c prints both from the firmware, and its
+// --check fails until the two lines below hold its strings verbatim (docs/SOUNDS.md "The binding")
+const FACTORY_PRESETS = {"2":["BRASS","ORGAN","STRING","RESO","BELL","WIRE"],"12":["TINE EP","FM BELL","FM BASS","BRASS","FM PAD","MARIMBA","FM ORGAN","FM PLUCK","DX TINE","BRASS SECT","SOLID BASS","BELLS","DX MARIMBA","CLAVINET","DRAWBARS","STRINGS","GLASS PAD","SYNC LEAD","HARP","KALIMBA","FLUTE","STEEL DRUM","SAW BASS","TUBULAR","PIANO"],"13":["LUSH PAD","WARM PAD","GLASS PAD","SLOW STRINGS","ENSEMBLE STR","SYNTH BRASS","SOFT BRASS","POLY KEYS","PWM KEYS","CLAV","SOFT LEAD","HOLLOW","BELLS","SWEEP PAD","SOFT AAH","ORGANISH","DEEP SUB","PUNCH BASS","RUBBER BASS","SYNC BASS","MORPH PAD","VINYL KEYS","WIDE STRINGS","CLOUD PAD","SHIMMER"],"14":["INIT TONE","BRASS 1","BRASS 2","BRASS 3","STRINGS 1","STRINGS 2","STRINGS 3","STRINGS 4","ORCHESTRA","ACO.GUITAR","JAZZ GUITAR","ELEC.GUITAR","SLAP BASS","SYNTH.BASS","ELEC.BASS 1","ELEC.BASS 2","HARP","BRASS 4","SAXOPHONE","CELLO","FLUTE","WHISTLE","HARMONICA","RECORDER","KOTO","PIANO 1","PIANO 2","PIANO 3","ELEC.PIANO","HONKY-TONK","FUNKY CLAV 1","FUNKY CLAV 2","HARPSICHORD","JAZZ ORGAN 1","JAZZ ORGAN 2","PIPE ORGAN 1","PIPE ORGAN 2","ACCORDION","VOICE 1","VOICE 2","VOICE 3","MUSIC BOX","VIBRAPHONE","XYLOPHONE","MARIMBA","MALLET LOG","AFRO PERC","BELLS","METALLIC","SYN STRINGS","FAT ENSEMBLE","SITAR","SYNTH.LEAD 1","SYNTH.LEAD 2","SYNTH.LEAD 3","SYNTH.LEAD 4","SWEEP 1","SYN DRUMS 1","SYN DRUMS 2","CONGA","STEEL DRUM","SWEEP 2","JET ROAR","MOTORCYCLE","TYPHOON"],"15":["EP","BELL","BASS","PLUCK","BRASS","GLASS PAD","HOLLOW","SQUARE LEAD","METAL","WOBBLE","CLAV","STRINGS","MARIMBA","DRONE","FEEDBACK","NOISE-ISH"],"16":["INIT PROPHET","It's a Prophet 5","After Ringer","Forever Keys","Funk Bass II","Formant Seraphim","Stabby Brass","No Whining","Fantastic Five","Velocipeed","PDG Organ","Clavicle","Blow by Blow","TaariChoir","Digi-Recorder","Reedy String Pad","Canned Happiness","Synchrotrill","Born in the 80's","Sticky Plucks","Watery Plucks","Bass Face","Antique Bell","Whiny Opener","Synctink","Trembling Organ","Sci-Fi Echo","Unicorn Dreams","Cocktail Hour","Nice n Smooth","Tumescent Bass","Internalized","Blinker Bells","Pickle Pincher","Underwater Trill","Fairy Dust","The Hats","Congo Bongo","SurdoTaiko","Punchy Bells","Mindfull","Poly McFat","Tangerine Chrch Thm","Reed EP","Cars Strings","Pipe Organisation","Fat Poly Bass","Choral Voices","Small Gong","Another Ocean","Pedaling Sweep","Hum-Along Solo","Fat Bass Stack","Afterblow Horn","Midnight PWM","Hyper Poly","Ripples","Aggro Synth","No Parking Swell","Radio Towers","Harpsi-Vibe","Instability Pad","Vintage Wurly","Phazy Synth","Robot Hamsters","Pressure Points","80s Horror Strings","NurseryComp","House Mover","Carillons","Vocal Pad","Soft Moving Brass","Squarecliff","J3 808","CATS MEOW","Morse Code Lead","DOG","Under The Ice","Distant Future","Marimba","Duotone","Pulse Pluck","Unisawyer","Recorder","Hoof Gelatin","Ghostly Glow","Uptight Bass","Ravecave","Dirty Lead","Celtic Moon","Hollow Dreams","Furry Tines","Mouse Blaster","Kyoto","Pink Neon Brass","Organ Perc","Skreamer Solo","Dream of Orgonon","Bistro","Impact Bass","Pluck Hollow","Velo Res Lead 2","Soft Brass","Regal Movement","Loose Squares","High Strings","Harpsicrud","Rubber Bumper","Galvanized Bucket","Soft Swell","Reverberant Strings","Lagoon Bass","Pluckity Duck","Bell Tree","Riser Chord","Timpanally","Rod Strike","Tuned Percussion","Mystery Bell","FM Clarinet","Funky Rev1 Bells","Sitarama","FedBack","Nylon Fingers","Gamelan","Sparkle Ponies","Marrakesh Radio C","Faint Memories","Full Hexagon","Old String Machine","Mantel Clock","Iconic Brass","Sync Swellpad","Pretty Pluck","House Vibez","Feature My Bass","ChorusLayer","Better Ways","Night Caller","Bassment","After the Denouement","Rewind","Syncwave","Organizer","Maneater Ping","Leslied","Bull By The Horns","Naive Melody","Poly Morgue","Busted and Dusted","Switchback","Tight Bass (556?)","Pluckyness","80s Sci Fi Drop","Catfood","Houndstooth","Cyberian Winds","Ominous Bellfall","FM Pluck","Metal Dronespace","End Credits","BRASS","LOW STRINGS","MUTED CLAVINET","PERCUSSIVE E PIANO","FLUTES","HARPSICHORD","SYNC I","PERCUSSIVE ORGAN","UNISON GLIDE W RES","HARMONIUM","ORGAN W RESONANCE","TOY PIANO","TRUMPET FLUTE","FILTER MOD","REED ORGAN","BASS IN FIFTHS","PIPE ORGAN FLUTES","SYNC II","ELECTRIC PIANO I","HIGH STRINGS","OCTAVE SAWTEETH","RELEASE REPEAT","DELAYED HARMONIC","ECHO REPEAT","PULSE WIDTH MOD","SLOW SYNC SWEEP","FOURTHS W RESONANCE","SWEEPING HARMONICS","SLOW SYNC","RANDOM ARPEGGIATOR","SAWTOOTH ARPEGGIATOR","CLANGOROUS BELLS","ALIEN","NOISE SWEEP","DESCENDING BELLS","DESCENDING PWM","HELICOPTER","RESONANCE BELLS","HOLLOW SOUND","CAT"],"18":["SUB PURE","ROUND TRI","SAW BASS","SQUARE SUB","ACID BASS","DRIVEN","DARK PLUCK","DETUNE BASS"],"19":["INIT MORPH"],"22":["CIRRUS","SILVER MIST","GLASS RAIN","EMBER","SKY FIFTHS","COMET TAIL","DUST PULSE","LOW STRATUS"],"23":["ORBIT HAZE","ORBIT GLASS","ORBIT REED","ORBIT CHOIR"],"24":["bass face","caterpillar","cstrings","dissolver","dub bass","grit drive","kids show","love chords","mr legato","newday","serious bass","so lonely","sqeek bend","streengs","trans4m","xyz files"],"25":["SLOW CURRENT","FIVE LIGHTS","THIN AIR"],"26":["ROUND TRIP","CONTOURS","RIDGE","TIDAL GRID"]};
+const FACTORY_FIRST = {"2":0,"12":0,"13":0,"14":1,"15":0,"16":0,"18":0,"19":0,"22":0,"23":0,"24":0,"25":0,"26":0};
+const SND_BIND_MARK = 0xA6, SND_BIND_NOTE = 160 + 15, SND_BIND_FLAGS = 176 + 15;
+// the pool a record is in (cr_bank.c cb_rec_engine): its engine if selectable, DIGITAL's FM6, another retired one ANALOG
+const poolOf = (engine) => (FACTORY_PRESETS[engine] ? engine : engine === 1 ? 12 : 0);
+// the factory preset index a record's binding names (cr_bank.c cb_bind_raw), -1: none (added)
+function sndBindRaw(r) {
+  if (!r || !recordValid(r) || r[1] === 3 || r[1] === 5 || r[SND_BIND_NOTE] !== SND_BIND_MARK || !r[SND_BIND_FLAGS]) return -1;
+  const e = poolOf(r[2]), f = r[SND_BIND_FLAGS] - 1;
+  return f >= (FACTORY_FIRST[e] || 0) && f < (FACTORY_PRESETS[e] || []).length ? f : -1;
+}
+// the 32 records (null: empty) -> per slot null, or {index, pos, label, name} of the factory preset it overwrites
+// (cr_bank.c cb_bound: the first slot bound to a factory preset wins, a later one is an added preset)
+function soundBindings(records) {
+  const seen = new Set();
+  return records.map((r) => {
+    const f = sndBindRaw(r);
+    if (f < 0) return null;
+    const e = poolOf(r[2]), key = `${e}:${f}`;
+    if (seen.has(key)) return null;
+    seen.add(key);
+    const pos = f - (FACTORY_FIRST[e] || 0) + 1;
+    return { index: f, pos, label: `${ENGINE_NAMES[e]} ${String(pos).padStart(2, "0")}`, name: FACTORY_PRESETS[e][f] };
+  });
+}
+// a slot's binding as a sound file carries it: {overwrites: the pool position, name} or null (added)
+const bindingOf = (bound) => (bound ? { overwrites: bound.pos, name: bound.name } : null);
+
+// the layouts (docs/SOUNDS.md "The objects that hold the user sounds")
+const SND_REC = 192, SND_PER_BANK = 16, SND_BANK_SIZE = 8 + SND_PER_BANK * SND_REC, SND_BANK_MAGIC = 0x31425055;
+const SND_USED = 0xA5, SND_NAME = 12;
+const SND_STORE = {   // per kind: the object ids (VA, QUAD: one store of 32, FM6 / CZ-1: two halves of 16), header, size
+  va: { ids: [9], magic: 0x31534156, ver: 3, nslot: 32, size: 16 + 32 * 110 },
+  fm6: { ids: [10, 11], magic: 0x55364D46, ver: 1, nslot: 16, size: 16 + 16 * 128 },
+  cz: { ids: [12, 13], magic: 0x55315A43, ver: 1, nslot: 16, size: 16 + 16 * 144 },
+  quad: { ids: [22], magic: 0x53445551, ver: 1, nslot: 32, size: 16 + 32 * 80 },
+};
+const SND_KINDS = ["va", "fm6", "cz", "quad"];
+const sndWhole = (kind) => kind === "va" || kind === "quad";   // one store of 32: the used mask at 8, the blob size at 12
+const sndView = (b) => new DataView(b.buffer, b.byteOffset, b.byteLength);
+const sndSlotOk = (slot) => Number.isInteger(slot) && slot >= 1 && slot <= SOUND_SLOTS;
+const sndLabel = (slot) => `U${String(slot).padStart(2, "0")}`;
+const slotLabel = sndLabel;
+function sndCheckSlot(slot) {
+  if (!sndSlotOk(slot)) throw new Error(`Slot ${slot} is not a user slot (1..64)`);
+}
+// objs: a Map or an object id -> Uint8Array (a missing id = size 0) -> a Map of the eight ids
+function sndMap(objs) {
+  const get = (id) => (objs instanceof Map ? objs.get(id) : objs && objs[id]);
+  return new Map(SOUND_IDS.map((id) => [id, get(id) instanceof Uint8Array ? get(id) : new Uint8Array(0)]));
+}
+
+// a record (192 bytes) is valid as up_valid tests it
+function recordValid(r) {
+  if (!r || r.length !== SND_REC) return false;
+  const ver = r[1], np = r[3];
+  if (r[0] !== SND_USED || ver < 1 || ver > 6 || r[2] >= ENGINE_NAMES.length || np < 8 || np > (ver >= 4 ? 144 : 72) || !r[4]) return false;
+  if(ver === 6) return r[2] === 21 && np === 91 && r.slice(16,118).every(v=>v<=127) && r.slice(118,159).every(v=>v<=191) && r[159]<52 && [[0,5],[26,5],[1,2],[27,2],[53,4],[62,1],[72,2]].every(([i,m])=>r[16+i]<=m);
+  if(r[2] === 21 || r[2] === 20) return false;
+  if(r[2] === 24 && (np>112 || r[158]!==0x43 || r[159]!==0x4c))return false;
+  if (ver >= 4) for (let i = 0; i < np; i++) if (r[16 + i] > 191) return false;
+  return true;
+}
+const sndBankOk = (b) => b.length === SND_BANK_SIZE && sndView(b).getUint32(0, true) === SND_BANK_MAGIC &&
+  sndView(b).getUint16(4, true) === SND_REC && sndView(b).getUint16(6, true) === SND_PER_BANK;
+const sndBankId = (slot) => (slot <= 16 ? 6 : 7);
+const sndRecOff = (slot) => 8 + ((slot - 1) % SND_PER_BANK) * SND_REC;
+function sndRecord(m, slot) {
+  if(slot>32)return extGet(m,slot).record;           // the slot's record bytes, or null (the bank is empty / not a bank)
+  const b = m.get(sndBankId(slot));
+  return sndBankOk(b) ? b.subarray(sndRecOff(slot), sndRecOff(slot) + SND_REC) : null;
+}
+// the store object of a kind that holds `slot`, its blob offset and its used bit
+function sndPlace(kind, slot) {
+  const s = SND_STORE[kind], h = sndWhole(kind) ? 0 : slot > 16 ? 1 : 0, k = sndWhole(kind) ? slot - 1 : (slot - 1) % 16;
+  return { id: s.ids[h], half: h, bit: k, off: 16 + k * PATCH_SIZE[kind] };
+}
+function sndStoreOk(kind, b, half) {
+  const s = SND_STORE[kind];
+  if (b.length !== s.size) return false;
+  const v = sndView(b), ver = v.getUint16(4, true);
+  if (v.getUint32(0, true) !== s.magic || v.getUint16(6, true) !== s.nslot) return false;
+  if (kind === "va") return (ver === 3 || ver === 2) && v.getUint16(12, true) === PATCH_SIZE.va;
+  if (kind === "quad") return ver === 1 && v.getUint16(12, true) === PATCH_SIZE.quad;
+  return ver === 1 && v.getUint16(8, true) === half * 16 && v.getUint16(10, true) === PATCH_SIZE[kind] && v.getUint32(12, true) >>> 16 === 0;
+}
+const sndUsedOff = (kind) => (sndWhole(kind) ? 8 : 12);
+function sndBlob(m, kind, slot) {
+  if(slot>32){const x=extGet(m,slot);return extKind[x.record[2]]===kind&&x.patch.length?x.patch:null;}        // the slot's blob in the store of that kind, or null (no store, bit clear)
+  const p = sndPlace(kind, slot), b = m.get(p.id);
+  if (!sndStoreOk(kind, b, p.half) || !(sndView(b).getUint32(sndUsedOff(kind), true) >>> p.bit & 1)) return null;
+  return b.subarray(p.off, p.off + PATCH_SIZE[kind]);
+}
+const sndDecodeName = (r) => { let s = ""; for (let i = 4; i < 4 + SND_NAME && r[i]; i++) s += String.fromCharCode(r[i]); return s; };
+const nameValid = (name) => typeof name === "string" && /^[\x20-\x7e]{1,12}$/.test(name);
+
+// the eight objects -> the slot table (docs/SOUNDS.md "The slot table")
+// bound: null, or the factory preset the slot overwrites ({index, pos, label, name}: "over FM6 02 FM BELL");
+// added: a used slot that is not bound (it follows the factory presets in its engine's pool)
+function parseSoundObjects(objs) {
+  const m = sndMap(objs);
+  const recs = Array.from({ length: SOUND_SLOTS }, (_, i) => { const r = sndRecord(m, i + 1); return r && recordValid(r) ? r : null; });
+  const binds = soundBindings(recs);
+  const slots = recs.map((r, i) => {
+    const slot = i + 1;
+    if (!r) return { slot, label: sndLabel(slot), used: false, name: "", engine: null, engineName: "", kind: null, patch: null, bound: null, added: false };
+    const engine = r[2], kind = patchKindOf(engine);
+    return { slot, label: sndLabel(slot), used: true, name: sndDecodeName(r), engine, engineName: ENGINE_NAMES[engine], kind,
+      patch: kind && sndBlob(m, kind, slot) ? kind : null, bound: binds[i], added: !binds[i] };
+  });
+  return { slots };
+}
+
+const sndB64 = (bytes) => { let s = ""; for (const b of bytes) s += String.fromCharCode(b); return btoa(s); };
+const SND_B64_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+function sndUnB64(s, what) {
+  if (typeof s !== "string" || !SND_B64_RE.test(s)) throw new Error(`The sound file's ${what} is not base64`);
+  return Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+}
+
+// slot -> the sound file (an object; JSON.stringify it to save). binding: what the record's binding bytes say on the
+// FM-1 it came from (informative: an import keeps the record's bytes, the FM-1 reads the binding from them)
+function exportSound(objs, slot, { firmware, created } = {}) {
+  sndCheckSlot(slot);
+  const m = sndMap(objs), r = sndRecord(m, slot);
+  if (!r || !recordValid(r)) throw new Error(`${sndLabel(slot)} is empty`);
+  const bound = parseSoundObjects(objs).slots[slot - 1].bound;
+  const engine = r[2], kind = patchKindOf(engine), blob = kind && sndBlob(m, kind, slot), name = sndDecodeName(r);
+  return {
+    format: SOUND_FORMAT, version: 1, firmware: firmware || null, created: created || new Date().toISOString(), slot,
+    name: nameValid(name) ? name : null, engine, engineName: ENGINE_NAMES[engine], binding: bindingOf(bound), record: sndB64(r),
+    patch: blob ? { kind, data: sndB64(blob) } : null,
+  };
+}
+// choralroot-sound-U05-MY_PAD.json
+const soundFileName = (slot, name) => `${SOUND_FORMAT}-${sndLabel(slot)}-${String(name || "").replace(/[^A-Za-z0-9-]/g, "_")}.json`;
+
+// a sound file (its text or the parsed object) -> {record: Uint8Array(192), name, engine, kind, patch: Uint8Array | null}
+// (a "binding" field, present or not, is not read: the record's two binding bytes are the truth)
+function readSoundFile(file) {
+  if (typeof file === "string") {
+    try { file = JSON.parse(file); } catch (e) { throw new Error("Not a sound file (not JSON)"); }
+  }
+  if (file && file.format === "felucca-backup") throw new Error("This is a whole backup, not a sound file: use Restore for it");
+  if (!file || typeof file !== "object" || file.format !== SOUND_FORMAT) throw new Error("Not a ChoralRoot sound file");
+  if (file.version !== 1) throw new Error(`Unsupported sound file version ${file.version}`);
+  const record = sndUnB64(file.record, "record");
+  if (record.length !== SND_REC) throw new Error(`The sound file's record is ${record.length} bytes, not ${SND_REC}`);
+  if (!recordValid(record)) throw new Error("The sound file's record is not a valid user sound");
+  const engine = record[2], kind = patchKindOf(engine);
+  if (file.engine !== undefined && file.engine !== null && file.engine !== engine)
+    throw new Error(`The sound file says engine ${file.engine}, its record holds ${engine} (${ENGINE_NAMES[engine]})`);
+  let name = sndDecodeName(record);
+  if (file.name !== undefined && file.name !== null) {
+    if (!nameValid(file.name)) throw new Error("The sound file's name must be 1 to 12 characters (ASCII letters, digits, symbols, spaces)");
+    name = file.name;
+  }
+  let patch = null;
+  if (file.patch !== undefined && file.patch !== null) {
+    if (typeof file.patch !== "object") throw new Error("The sound file's patch is not an object");
+    if (!kind || file.patch.kind !== kind)
+      throw new Error(`The sound file's patch (${file.patch.kind}) is not the kind of its engine ${ENGINE_NAMES[engine]} (${kind || "none"})`);
+    patch = sndUnB64(file.patch.data, "patch");
+    if (patch.length !== PATCH_SIZE[kind]) throw new Error(`The sound file's ${kind} patch is ${patch.length} bytes, not ${PATCH_SIZE[kind]}`);
+    if (kind === "va" && (patch[0] !== 0x56 || patch[1] < 1 || patch[1] > 3)) throw new Error("The sound file's VA patch is not a VA patch (magic or version)");
+    if (kind === "fm6" && (patch[112] !== 0x46 || patch[113] !== 1)) throw new Error("The sound file's FM6 patch is not an FM6 patch (magic)");
+    if (kind === "quad" && (patch[0] !== 0x51 || patch[1] !== 1)) throw new Error("The sound file's QUAD patch is not a QUAD patch (magic or version)");
+  }
+  return { record, name, engine, engineName: ENGINE_NAMES[engine], kind, patch };
+}
+
+// ---- edits: new object bytes; -> {changed: [{id, bytes}] (the stores first, the bank last), objs: the new Map}
+function sndNewBank() {
+  const b = new Uint8Array(SND_BANK_SIZE), v = sndView(b);
+  v.setUint32(0, SND_BANK_MAGIC, true); v.setUint16(4, SND_REC, true); v.setUint16(6, SND_PER_BANK, true);
+  return b;
+}
+function sndNewStore(kind, half) {
+  const s = SND_STORE[kind], b = new Uint8Array(s.size), v = sndView(b);
+  v.setUint32(0, s.magic, true); v.setUint16(4, s.ver, true); v.setUint16(6, s.nslot, true);
+  if (sndWhole(kind)) v.setUint16(12, PATCH_SIZE[kind], true);
+  else { v.setUint16(8, half * 16, true); v.setUint16(10, PATCH_SIZE[kind], true); }
+  return b;
+}
+// the slot's blob of `kind` = blob (null: cleared). Clearing a slot whose bit is clear changes nothing (as va_store_put)
+function sndPutBlob(m, kind, slot, blob) {
+  if(slot>32)return;
+  const p = sndPlace(kind, slot), old = m.get(p.id), ok = sndStoreOk(kind, old, p.half), uo = sndUsedOff(kind);
+  if (!blob) {
+    if (!ok || !(sndView(old).getUint32(uo, true) >>> p.bit & 1)) return;
+    const b = old.slice(), v = sndView(b);
+    v.setUint32(uo, (v.getUint32(uo, true) & ~(1 << p.bit)) >>> 0, true);
+    b.fill(0, p.off, p.off + PATCH_SIZE[kind]);
+    m.set(p.id, b); return;
+  }
+  if (kind === "va" && ok && sndView(old).getUint16(4, true) === 2)   // (a version-2 store is converted at the FM-1's boot)
+    throw new Error("The VA patch store on the FM-1 is an older version: save any VA sound on the FM-1 once, then try again");
+  const b = ok ? old.slice() : sndNewStore(kind, p.half), v = sndView(b);
+  b.set(blob, p.off);
+  v.setUint32(uo, (v.getUint32(uo, true) | 1 << p.bit) >>> 0, true);
+  m.set(p.id, b);
+}
+function sndPutRecord(m, slot, rec) {
+  if(slot>32){extPut(m,slot,rec);return;}   // rec null: the record zeroed (an empty or foreign bank: nothing to clear)
+  const id = sndBankId(slot), old = m.get(id), ok = sndBankOk(old);
+  if (!rec && !ok) return;
+  const b = ok ? old.slice() : sndNewBank();
+  if (rec) b.set(rec, sndRecOff(slot)); else b.fill(0, sndRecOff(slot), sndRecOff(slot) + SND_REC);
+  m.set(id, b);
+}
+function sndResult(before, m) {
+  const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+  const ids = [9, 10, 11, 12, 13, 22, 6, 7, 70, 71].filter((id) => !same(before.get(id), m.get(id)));
+  return { changed: ids.map((id) => ({ id, bytes: m.get(id) })), objs: m };
+}
+const sndWriteName = (rec, name) => { rec.fill(0, 4, 4 + SND_NAME); for (let i = 0; i < name.length; i++) rec[4 + i] = name.charCodeAt(i); };
+
+// a sound (readSoundFile's result, or the file / its text) into slot
+function importSound(objs, slot, sound) {
+  sndCheckSlot(slot);
+  if (!sound || !(sound.record instanceof Uint8Array)) sound = readSoundFile(sound);
+  const before = sndMap(objs), m = new Map(before), rec = sound.record.slice();
+  if (!recordValid(rec)) throw new Error("Not a valid user sound record");
+  if (sound.name !== undefined && sound.name !== null) {
+    if (!nameValid(sound.name)) throw new Error("A name is 1 to 12 characters (ASCII letters, digits, symbols, spaces)");
+    sndWriteName(rec, sound.name);
+  }
+  const kind = patchKindOf(rec[2]);
+  if (sound.patch && (!kind || sound.patch.length !== PATCH_SIZE[kind])) throw new Error("The patch is not of the sound's engine");
+  if(slot>32){extPut(m,slot,rec,sound.patch||new Uint8Array(0));return sndResult(before,m);}
+  for (const k of SND_KINDS) sndPutBlob(m, k, slot, k === kind && sound.patch ? sound.patch : null);
+  sndPutRecord(m, slot, rec);
+  return sndResult(before, m);
+}
+function renameSound(objs, slot, name) {
+  sndCheckSlot(slot);
+  if (!nameValid(name)) throw new Error("A name is 1 to 12 characters (ASCII letters, digits, symbols, spaces)");
+  const before = sndMap(objs), m = new Map(before), r = sndRecord(m, slot);
+  if (!r || !recordValid(r)) throw new Error(`${sndLabel(slot)} is empty`);
+  const rec = r.slice();
+  sndWriteName(rec, name);
+  sndPutRecord(m, slot, rec);
+  return sndResult(before, m);
+}
+function deleteSound(objs, slot) {
+  sndCheckSlot(slot);
+  const before = sndMap(objs), m = new Map(before);
+  for (const k of SND_KINDS) sndPutBlob(m, k, slot, null);
+  sndPutRecord(m, slot, null);
+  return sndResult(before, m);
+}
+
+// ---- the FM-1: read the eight objects (22 when listed), write the changed ones (the backup protocol, as captureBackup / restoreBackup)
+const SND_RC = { 1: "invalid object", 2: "the content failed the FM-1's check", 3: "busy: stop the loop on the FM-1",
+  4: "flash write failed", 5: "the session ended: try again" };
+function sndRcError(rc, what) {
+  const e = new Error(rc === 2 ? `The FM-1 refused the ${what} (rc 2)` : `The FM-1 answered for the ${what}: ${SND_RC[rc] || "error"} (rc ${rc})`);
+  e.rc = rc; return e;
+}
+const sndSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const SND_CHUNK = 256;
+
+// -> {objs: Map id -> Uint8Array}; a firmware without the stores (Felucca, an older ChoralRoot) is refused
+async function readSounds(request, onProgress = () => {}) {
+  for (let attempt = 0; ; attempt++) {
+    const manifest = bkManifest(await request([BACKUP_CMD.LIST, []], { timeout: 3000, retries: 0 }));
+    const listed = new Map(manifest.map((o) => [o.id, o]));
+    if (SOUND_IDS.some((id) => !listed.has(id) && !SOUND_IDS_OPTIONAL.includes(id)))
+      throw new Error("This firmware does not hold the user sounds' patch stores (ChoralRoot needed)");
+    const ids = SOUND_IDS.filter((id) => listed.has(id));
+    const total = ids.reduce((n, id) => n + listed.get(id).size, 0), objs = new Map();
+    let done = 0, changed = false;
+    for (const id of ids) {
+      const o = listed.get(id), bytes = new Uint8Array(o.size);
+      for (let off = 0; off < o.size; off += SND_CHUNK) {
+        const size = Math.min(SND_CHUNK, o.size - off);
+        const a = await request([BACKUP_CMD.GET, [id, ...bkU32(off), size & 127, size >>> 7]], { timeout: 1000, retries: 1 });
+        if (a[1]) throw sndRcError(a[1], objectName(id));
+        if (a[0] !== id || bkR32(a, 2) !== off || (a[7] | a[8] << 7) !== size) throw new Error("Unexpected reply from the FM-1");
+        bytes.set(bkUnpack(a.slice(9), size), off);
+        done += size; onProgress(done, total);
+      }
+      if ((o.size ? bkCrc(bytes) : 0) !== o.crc) { changed = true; break; }
+      objs.set(id, bytes);
+    }
+    if (!changed) {
+      for (const id of SOUND_IDS) if (!objs.has(id)) objs.set(id, new Uint8Array(0));   // (an unlisted optional store)
+      return { objs };
+    }
+    if (attempt) throw new Error("The FM-1 changed during the read. Try again (stop the loop if one is saving).");
+  }
+}
+
+// changed: [{id, bytes}] in the order to write (importSound & co. put the stores first, the bank last). Each object:
+// PUT begin / data / commit; rc 3 (busy) retried each second opts.busyTries times (opts.onBusy() each time); a failure
+// aborts that object and stops: nothing after it is written. -> the ids written
+async function writeSounds(request, changed, opts = {}) {
+  const onProgress = opts.onProgress || (() => {}), busyTries = opts.busyTries ?? 120;
+  const ask = (r) => request(r, { timeout: 4000, retries: 0 });
+  const put = async (args, what) => { const a = await ask([BACKUP_CMD.PUT, args]); if (a[2]) throw sndRcError(a[2], what); return a; };
+  const retry = async (f) => {
+    for (let i = 0; ; i++) {
+      try { return await f(); }
+      catch (e) { if (e.rc !== 3 || i >= busyTries) throw e; if (opts.onBusy) opts.onBusy(); await sndSleep(1000); }
+    }
+  };
+  const total = changed.reduce((n, o) => n + o.bytes.length, 0), written = [];
+  let done = 0;
+  for (const { id, bytes } of changed) {
+    const what = objectName(id);
+    await retry(() => put([0, id, ...bkU32(bytes.length), ...bkU32(bkCrc(bytes))], what));
+    try {
+      for (let off = 0; off < bytes.length; off += SND_CHUNK) {
+        const chunk = bytes.subarray(off, off + SND_CHUNK);
+        await put([1, id, ...bkU32(off), ...bkPack(chunk)], what);
+        done += chunk.length; onProgress(done, total);
+      }
+      await retry(() => put([2, id], what));
+    } catch (e) {
+      await ask([BACKUP_CMD.PUT, [3, id]]).catch(() => {});
+      throw e;
+    }
+    written.push(id);
+  }
+  return written;
+}
+
+// ---- .syx export and import (docs/SOUNDS.md ".syx export and import"): an FM6 slot's voice as a DX7 single voice, a
+// CZ-1 slot's tone as Casio's tone dump; an import builds the rest of the record from the engine's template
+// (tests/sound_templates.c prints these from the firmware; its --check fails until they are pasted again)
+const SOUND_TEMPLATES = {
+  fm6: "pQQMW1NZWCBJTVBPUlQAAKhKhpp8QEBAQHxAQEBAQEBAQEJBgEC/QEBAQEBAUEJAgEBAQEBAQEBAQEBAaEBBQb9AQEBAQEBAQEBAQEBAQL9Av0BAv0C/QEC/QL9AQL9Av0BAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  cz: "pQQOW1NZWCBJTVBPUlQAAKhKhpp8QEBAQHxAQEBAQEBAQEJBgEC/QEBAQEBAUEJAgEBAQEBAQEBAQEBAaEBBQb9AQEBAQEBAQEBAQEBAQL9Av0BAv0C/QEC/QL9AQL9Av0BAQEBAQEBAQEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+};
+// the FM6 function settings an imported voice gets (eng_fm6.c FM6_FNDEF bit-packed as fm6_blob_make packs them: the
+// fixture fm6_fn, = bytes 114..121 of a blob the firmware makes)
+const FM6_FN_DEFAULTS = Uint8Array.from([0x33, 0x00, 0x60, 0x1C, 0x00, 0x00, 0x00, 0x40]);
+const FM6_VCED = 155, FM6_VMEM = 128, FM6_BANK = 32 * FM6_VMEM, CZ_TONE = 144;
+const FV = { LC: 11, RC: 12, RS: 13, AMS: 14, KVS: 15, OL: 16, MODE: 17, FC: 18, FF: 19, DET: 20, OP: 21,
+  PR1: 126, ALG: 134, FB: 135, OKS: 136, LFS: 137, LKS: 141, LFW: 142, LPMS: 143, TRNSP: 144, NAME: 145 };
+const FM6_OPMAX = [99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 3, 3, 7, 3, 7, 99, 1, 31, 99, 14];
+const FM6_VMAX = [99, 99, 99, 99, 99, 99, 99, 99, 31, 7, 1, 99, 99, 99, 99, 1, 5, 7, 48];
+const fm6Max = (i) => (i < 126 ? FM6_OPMAX[i % 21] : i < FV.NAME ? FM6_VMAX[i - 126] : 126);
+function fm6Sanitize(v) {               // eng_fm6.c fm6_sanitize: every value in its range, a bad name byte -> space
+  for (let i = 0; i < FM6_VCED; i++) {
+    if (i >= FV.NAME) { if (v[i] < 32 || v[i] > 126) v[i] = 32; }
+    else if (v[i] > fm6Max(i)) v[i] = fm6Max(i);
+  }
+  return v;
+}
+function fm6Unpack(b) {                 // VMEM 128 -> VCED 155 (eng_fm6.c fm6_unpack, then sanitized)
+  const v = new Uint8Array(FM6_VCED);
+  for (let k = 0; k < 6; k++) {
+    const o = b.subarray(k * 17, k * 17 + 17), d = k * FV.OP;
+    for (let i = 0; i < 11; i++) v[d + i] = o[i] & 0x7F;
+    v[d + FV.LC] = o[11] & 3; v[d + FV.RC] = o[11] >> 2 & 3;
+    v[d + FV.RS] = o[12] & 7; v[d + FV.DET] = o[12] >> 3 & 15;
+    v[d + FV.AMS] = o[13] & 3; v[d + FV.KVS] = o[13] >> 2 & 7;
+    v[d + FV.OL] = o[14] & 0x7F;
+    v[d + FV.MODE] = o[15] & 1; v[d + FV.FC] = o[15] >> 1 & 31;
+    v[d + FV.FF] = o[16] & 0x7F;
+  }
+  for (let i = 0; i < 9; i++) v[FV.PR1 + i] = b[102 + i] & 0x7F;
+  v[FV.ALG] &= 31;
+  v[FV.FB] = b[111] & 7; v[FV.OKS] = b[111] >> 3 & 1;
+  for (let i = 0; i < 4; i++) v[FV.LFS + i] = b[112 + i] & 0x7F;
+  v[FV.LKS] = b[116] & 1; v[FV.LFW] = b[116] >> 1 & 7; v[FV.LPMS] = b[116] >> 4 & 7;
+  v[FV.TRNSP] = b[117] & 0x7F;
+  for (let i = 0; i < 10; i++) v[FV.NAME + i] = b[118 + i] & 0x7F;
+  return fm6Sanitize(v);
+}
+function fm6Pack(v) {                   // VCED 155 -> VMEM 128 (eng_fm6.c fm6_pack)
+  const b = new Uint8Array(FM6_VMEM);
+  for (let k = 0; k < 6; k++) {
+    const o = k * FV.OP, d = k * 17;
+    for (let i = 0; i < 11; i++) b[d + i] = v[o + i] & 0x7F;
+    b[d + 11] = (v[o + FV.LC] & 3) | (v[o + FV.RC] & 3) << 2;
+    b[d + 12] = (v[o + FV.RS] & 7) | (v[o + FV.DET] & 15) << 3;
+    b[d + 13] = (v[o + FV.AMS] & 3) | (v[o + FV.KVS] & 7) << 2;
+    b[d + 14] = v[o + FV.OL] & 0x7F;
+    b[d + 15] = (v[o + FV.MODE] & 1) | (v[o + FV.FC] & 31) << 1;
+    b[d + 16] = v[o + FV.FF] & 0x7F;
+  }
+  for (let i = 0; i < 9; i++) b[102 + i] = v[FV.PR1 + i] & 0x7F;
+  b[110] &= 31;
+  b[111] = (v[FV.FB] & 7) | (v[FV.OKS] & 1) << 3;
+  for (let i = 0; i < 4; i++) b[112 + i] = v[FV.LFS + i] & 0x7F;
+  b[116] = (v[FV.LKS] & 1) | (v[FV.LFW] & 7) << 1 | (v[FV.LPMS] & 7) << 4;
+  b[117] = v[FV.TRNSP] & 0x7F;
+  for (let i = 0; i < 10; i++) b[118 + i] = v[FV.NAME + i] & 0x7F;
+  return b;
+}
+// eight 7-bit bytes <-> seven (eng_fm6.c fm6_pack7 / fm6_unpack7): 128 <-> 112
+function fm6Pack7(s) {
+  const d = new Uint8Array(s.length / 8 * 7);
+  for (let i = 0, o = 0; i < s.length; i += 8, o += 7)
+    for (let j = 0; j < 7; j++) d[o + j] = (s[i + j] & 0x7F) | (s[i + 7] >> j & 1) << 7;
+  return d;
+}
+function fm6Unpack7(s, n) {
+  const d = new Uint8Array(n);
+  for (let i = 0, o = 0; i < n; i += 8, o += 7) {
+    for (let j = 0; j < 7; j++) { d[i + j] = s[o + j] & 0x7F; d[i + 7] |= (s[o + j] >> 7) << j; }
+  }
+  return d;
+}
+// an FM6 blob (128) -> the DX7 voice (VCED, 155 bytes); the function settings (114..121) are left out
+function fm6BlobToVced(blob) {
+  if (!(blob instanceof Uint8Array) || blob.length !== PATCH_SIZE.fm6 || blob[112] !== 0x46 || blob[113] !== 1)
+    throw new Error("Not an FM6 patch (128 bytes, 'F' 1 at 112)");
+  return fm6Unpack(fm6Unpack7(blob.subarray(0, 112), FM6_VMEM));
+}
+// a DX7 voice (VCED, 155) -> an FM6 blob (128): every value clamped into its range, the function defaults
+function vcedToFm6Blob(vced) {
+  if (!vced || vced.length !== FM6_VCED) throw new Error(`A DX7 voice is ${FM6_VCED} bytes, not ${vced ? vced.length : 0}`);
+  const b = new Uint8Array(PATCH_SIZE.fm6);
+  b.set(fm6Pack7(fm6Pack(fm6Sanitize(Uint8Array.from(vced)))), 0);
+  b[112] = 0x46; b[113] = 1;
+  b.set(FM6_FN_DEFAULTS, 114);
+  return b;
+}
+const syxSum = (d) => (128 - (d.reduce((s, x) => s + x, 0) & 127)) & 127;
+// a DX7 single voice: F0 43 00 00 01 1B <155> <checksum> F7 (163 bytes)
+function fm6VcedSyx(vced) {
+  if (!vced || vced.length !== FM6_VCED) throw new Error(`A DX7 voice is ${FM6_VCED} bytes`);
+  const d = Uint8Array.from(vced, (x) => x & 0x7F);
+  return Uint8Array.from([0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B, ...d, syxSum(d), 0xF7]);
+}
+// a CZ-1 tone: F0 44 00 00 70 30 <288 nibbles, the low first> F7 (295 bytes)
+function czToneSyx(tone) {
+  if (!tone || tone.length !== CZ_TONE) throw new Error(`A CZ-1 tone is ${CZ_TONE} bytes`);
+  const out = new Uint8Array(7 + 2 * CZ_TONE);
+  out.set([0xF0, 0x44, 0x00, 0x00, 0x70, 0x30]);
+  for (let j = 0; j < CZ_TONE; j++) { out[6 + 2 * j] = tone[j] & 15; out[7 + 2 * j] = tone[j] >> 4; }
+  out[out.length - 1] = 0xF7;
+  return out;
+}
+const SYX_WHAT = "a .syx for the FM-1 holds a DX7 voice or 32-voice bank (F0 43 ..) or a CZ-1 tone (F0 44 ..); " +
+  "a raw file is 155 (a DX7 voice), 4096 (a DX7 bank) or 144 bytes (a CZ-1 tone)";
+function syxFrame(f, n) {               // one F0 .. F7 frame -> {kind, voices | tones}
+  const at = `SysEx message ${n} (${f.length} bytes)`;
+  if (f[1] === 0x43 && (f[2] & 0xF0) === 0 && f[3] === 0 && f[4] === 0x01 && f[5] === 0x1B) {
+    if (f.length !== 163) throw new Error(`${at}: a DX7 single voice is 163 bytes`);
+    const d = f.subarray(6, 161);
+    if (syxSum(d) !== f[161]) throw new Error(`${at}: the DX7 voice's checksum is wrong (the file is damaged)`);
+    return { kind: "fm6", voices: [d.slice()] };
+  }
+  if (f[1] === 0x43 && (f[2] & 0xF0) === 0 && f[3] === 0x09 && f[4] === 0x20 && f[5] === 0x00) {
+    if (f.length !== 4104) throw new Error(`${at}: a DX7 32-voice bank is 4104 bytes`);
+    const d = f.subarray(6, 4102);
+    if (syxSum(d) !== f[4102]) throw new Error(`${at}: the DX7 bank's checksum is wrong (the file is damaged)`);
+    return { kind: "fm6", voices: Array.from({ length: 32 }, (_, k) => fm6Unpack(d.subarray(k * FM6_VMEM, (k + 1) * FM6_VMEM))) };
+  }
+  if (f[1] === 0x44 && f[2] === 0 && f[3] === 0 && (f[4] & 0xF0) === 0x70 && f[5] === 0x30) {
+    const nib = f.subarray(6, f.length - 1);
+    if (nib.length === 256) throw new Error("This is a CZ-101 / 1000 tone: the FM-1 takes only CZ-1 tones from files (send it to the FM-1 over MIDI to convert it)");
+    if (nib.length !== 2 * CZ_TONE) throw new Error(`${at}: a CZ-1 tone dump holds 288 nibbles, this one ${nib.length}`);
+    if (nib.some((x) => x > 15)) throw new Error(`${at}: not a CZ-1 tone dump (a nibble above 15)`);
+    return { kind: "cz", tones: [Uint8Array.from({ length: CZ_TONE }, (_, j) => nib[2 * j] | nib[2 * j + 1] << 4)] };
+  }
+  if (f[1] === 0x43) throw new Error(`${at}: a Yamaha message that is not a DX7 voice or bank`);
+  if (f[1] === 0x44) throw new Error(`${at}: a Casio message that is not a CZ-1 tone dump`);
+  throw new Error(`${at}: not a DX7 voice or bank, nor a CZ-1 tone (${SYX_WHAT})`);
+}
+// a .syx (or raw) file's bytes -> {kind: "fm6", voices: [VCED 155 ..]} | {kind: "cz", tones: [144 ..]}
+function parseSyx(bytes) {
+  if (!(bytes instanceof Uint8Array)) bytes = Uint8Array.from(bytes || []);
+  if (!bytes.length) throw new Error("The file is empty");
+  if (bytes[0] !== 0xF0) {
+    const raw7 = () => bytes.every((x) => x < 0x80);
+    if (bytes.length === FM6_VCED && raw7()) return { kind: "fm6", voices: [bytes.slice()] };
+    if (bytes.length === FM6_BANK && raw7())
+      return { kind: "fm6", voices: Array.from({ length: 32 }, (_, k) => fm6Unpack(bytes.subarray(k * FM6_VMEM, (k + 1) * FM6_VMEM))) };
+    if (bytes.length === CZ_TONE) return { kind: "cz", tones: [bytes.slice()] };
+    throw new Error(`Not a DX7 or CZ-1 file (${bytes.length} bytes): ${SYX_WHAT}`);
+  }
+  const frames = [];
+  for (let i = 0; i < bytes.length;) {
+    if (bytes[i] !== 0xF0) throw new Error(`Not a SysEx file: byte ${i} is outside a message`);
+    let e = i + 1;
+    while (e < bytes.length && bytes[e] !== 0xF7) {
+      if (bytes[e] & 0x80) throw new Error(`SysEx message ${frames.length + 1} is cut short (byte ${e})`);
+      e++;
+    }
+    if (e >= bytes.length) throw new Error(`SysEx message ${frames.length + 1} has no end (F7)`);
+    frames.push(bytes.subarray(i, e + 1));
+    i = e + 1;
+  }
+  const parts = frames.map((f, n) => syxFrame(f, n + 1)), kind = parts[0].kind;
+  if (parts.some((p) => p.kind !== kind)) throw new Error("The file mixes DX7 voices and CZ-1 tones: keep one kind per file");
+  return kind === "fm6" ? { kind, voices: parts.flatMap((p) => p.voices) } : { kind, tones: parts.flatMap((p) => p.tones) };
+}
+const syxCount = (parsed) => (parsed.kind === "fm6" ? parsed.voices : parsed.tones).length;
+// the name an imported voice / tone gets: printable ASCII, trimmed, cut to 12; empty -> the engine's default
+function syxName(bytes, fallback) {
+  const s = Array.from(bytes, (c) => (c < 32 || c > 126 ? " " : String.fromCharCode(c))).join("").trim().slice(0, SND_NAME).trimEnd();
+  return s || fallback;
+}
+// a voice / tone of parseSyx's result (index 1..N) -> a sound as readSoundFile returns it (the template's record)
+function soundFromSyx(parsed, index = 1) {
+  const list = parsed && (parsed.kind === "fm6" ? parsed.voices : parsed.kind === "cz" ? parsed.tones : null);
+  if (!list) throw new Error("Not a parsed .syx");
+  if (!Number.isInteger(index) || index < 1 || index > list.length) throw new Error(`Voice ${index} is not in the file (1..${list.length})`);
+  const item = list[index - 1], fm6 = parsed.kind === "fm6";
+  const record = sndUnB64(SOUND_TEMPLATES[parsed.kind], "template");
+  const name = fm6 ? syxName(item.subarray(FV.NAME, FV.NAME + 10), "FM6 VOICE") : syxName(item.subarray(128, 144), "CZ TONE");
+  sndWriteName(record, name);
+  record[SND_BIND_NOTE] = SND_BIND_MARK; record[SND_BIND_FLAGS] = 0;   // bound to nothing: an added preset of its pool
+  if (!recordValid(record)) throw new Error("The template record is not valid");
+  const engine = record[2], kind = patchKindOf(engine);
+  const patch = fm6 ? vcedToFm6Blob(item) : Uint8Array.from(item);
+  return { record, name, engine, engineName: ENGINE_NAMES[engine], kind, patch };
+}
+// choralroot-sound-U05-NAME.syx
+const syxFileName = (slot, name) => soundFileName(slot, name).replace(/\.json$/, ".syx");
+// an FM6 / CZ-1 slot with its patch -> {bytes: the .syx, name: the sound's name, fileName}
+function exportSyx(objs, slot) {
+  sndCheckSlot(slot);
+  const m = sndMap(objs), r = sndRecord(m, slot);
+  if (!r || !recordValid(r)) throw new Error(`${sndLabel(slot)} is empty`);
+  const engine = r[2], kind = patchKindOf(engine);
+  if (kind !== "fm6" && kind !== "cz") throw new Error(`${sndLabel(slot)} is ${ENGINE_NAMES[engine]}: only FM6 and CZ-1 sounds export as .syx`);
+  const blob = sndBlob(m, kind, slot);
+  if (!blob) throw new Error(`${sndLabel(slot)} has no ${ENGINE_NAMES[engine]} patch stored (it plays the engine's defaults)`);
+  const name = sndDecodeName(r);
+  return { bytes: kind === "fm6" ? fm6VcedSyx(fm6BlobToVced(blob)) : czToneSyx(blob), name, fileName: syxFileName(slot, name) };
+}
+
+// SPDX-License-Identifier: GPL-3.0-only
+// more chords!: validate the exact published release before enabling installation.
+async function validateRelease(bytes, meta) {
+  if (!(bytes instanceof Uint8Array) || !meta || meta.product !== 'FM-1_920' ||
+      !Number.isInteger(meta.size) || meta.size < 1024 || meta.size > 2 * 1024 * 1024 ||
+      !/^[a-f0-9]{64}$/.test(meta.sha256 || '')) throw new Error('Invalid release metadata');
+  if (bytes.length !== meta.size) throw new Error('Firmware size differs from the published release');
+  if (await sha256hex(bytes) !== meta.sha256) throw new Error('Firmware SHA-256 differs from the published release');
+  if (productOf(bytes) !== meta.product) throw new Error('Unexpected firmware identity');
+  if (!new TextDecoder('latin1').decode(bytes).includes('FELUCCA-LOADER-1')) throw new Error('Missing update-loader marker');
+  const pkg = new Package(bytes); // UFW entry/header/flash CRCs and native app layout.
+  if (pkg.flashSize !== 0x93000 || pkg.flashFileOff !== 0x414 || pkg.appBase !== 0x4000)
+    throw new Error('Unsupported FM1 package layout');
+  const image = logicalImage(bytes);
+  if (pkg.flash.some((b, i) => image[i + 0x400] !== b)) throw new Error('Flash-image slice mismatch');
+  return image;
+}
+
+const $ = (id) => document.getElementById(id);
+const meta = {"version": "v48", "product": "FM-1_920", "size": 610297, "sha256": "3917d7a3b5e9509feb4404d7ffcbf778c9933a847158a0e5a33bec181d648d58", "label": "CLOUD Nine Banks + Init Preset", "reportedFirmware": "ChoralRoot 0.14", "pkg": "../../firmware/more-chords-v48-3917d7a3b5e9.fwsc"};
+$("release-version").textContent = meta.version;
+const TEXT = {
+  en: {
+    intro: "Install more chords! on your FM1. Connect it by USB, close other MIDI applications and use a desktop browser with Web MIDI SysEx support, such as Chrome or Edge.",
+    warn: "Charge the FM1 fully before updating. Keep it connected directly to USB and keep the computer awake until the installer finishes. Do not unplug it while writing.",
+    install: "Connect & install more chords!",
+    direct: "Connect the USB cable directly to the computer. No probe or Transporter is needed.",
+    over: "Installing over the stock firmware, Felucca 1.0 or later, Melodee or ChoralRoot replaces it; the FM-1 reports FM-1_920 afterwards. Over Sloop, the Felucca 0.x betas and other firmwares the installer stops: return to the official V15 first. An interrupted install is resumed by pressing Install again.",
+    backupFirst: "Install first saves a backup of what is stored on the FM-1 (user sounds, loops, settings, FM6 patches) to a file on this computer. Felucca and ChoralRoot can be backed up; the stock firmware cannot.",
+    skipBackup: "Skip the backup (I already saved one, or the FM-1 runs the stock firmware)",
+    bkTitle: "Back up and restore",
+    bkText: "A backup is one .json file holding everything stored on the FM-1: the settings, the 64 user sounds with their VA, FM6 and CZ-1 patches, the 30 loops, the FM6 patch bank and the CZ-1 banks. Restore writes it back; each part is checked before anything is written, and the FM-1 restarts at the end. Stop any loop first. Each flash write holds the sound for about 45 ms.",
+    bkAcross: "Across firmwares: a Felucca backup restores its settings, user sounds and FM6 patches on ChoralRoot; a ChoralRoot backup restores the same on Felucca. What the other firmware cannot use (Felucca's songs and samples, ChoralRoot's VA patches and loops) stays in the file.",
+    backupGo: "Back up", restoreFile: "Backup file (.json)", restoreGo: "Restore",
+    backup: "Saving a backup ", backupSaved: "Backup saved: ",
+    noBackup: "The FM-1 cannot be backed up from this page (the stock firmware, or an older Felucca).",
+    noBackupConfirm: "The FM-1 could not be backed up. Install anyway, without a backup? Its user sounds, loops and settings may be lost.",
+    restoreOffer: "more chords! is installed. Restore the backup just saved onto it now (settings, user sounds, FM6 patches)?",
+    restoreConfirm: "Restore this backup onto the FM-1? What it holds replaces what is stored on the FM-1, and the FM-1 restarts afterwards.",
+    restoring: "Restoring ", restoreBusy: "Stop the loop on the FM-1 to continue the restore",
+    restored: "Restored: ", restoreSkipped: " (not used by this firmware, kept in the file: ", badBackup: "Not a usable backup file: ",
+    cancelled: "Cancelled. Nothing was written.",
+    brick: "If an install fails and the FM-1 no longer starts, see \"Device not found?\" below.",
+    forceRisk: "I understand the risk: install over this firmware anyway",
+    forceConfirm: "Install more chords! over {name} anyway? This is not supported, and an install like it has left an FM-1 that no longer starts (recovery: github.com/Quixotic7/MvaveFM1Unbricker). Continue only if you can recover the FM-1 yourself.",
+    darkTitle: "Device not found?",
+    darkCable: "Check the USB cable (a data cable, directly on the computer, not through a hub), close other apps that use MIDI, switch the FM-1 on and press Install again.",
+    darkText: "If the FM-1's screen stays black and the computer shows a USB disk named \"WL82 UBOOT1.00\" (USB ID 4C4A:8057) instead of the FM-1, the FM-1 is in the chip's ROM boot mode: the firmware on it does not start, and this page cannot reach it. Do not format that disk. Recovery tools and a guide that put the official V15 back over the same USB cable:",
+    darkTransporter: "If it does not show up as WL82 UBOOT1.00 either, the hardware route is the FM-1 Transporter (an RP2040 board on the USB lines):",
+    beta: "more chords! {version} is a community remix. This web installer has been tested with simulated devices; a physical-device browser update still needs verification. The supplied v48 package is the same file checked with the command-line installer.",
+    back: "Get the official FM-1 V15 firmware from M-VAVE and select the unmodified FM-1.fwsc. The browser checks the file locally; it is not sent to a server.",
+    stockTitle: "Return to official V15", stockFile: "Official FM-1.fwsc", stockGo: "Back up and return to official V15",
+    stockWarn: "The stock firmware cannot use ChoralRoot's user sounds, loops or settings. They are saved to a backup file first; to bring them back, reinstall ChoralRoot and press Restore.",
+    stockRecovery: "Resume an interrupted update: I already saved a backup to this computer",
+    stockNeedBackup: "An FM-1 in update mode cannot be backed up. Tick the resume box only if you already saved a backup.",
+    stockValid: "Official V15 verified",
+    stockConfirm: "Has the backup file been saved to this computer? Continue to install the official V15. The stock firmware cannot open ChoralRoot's data.",
+    stockError: "Cannot validate the official firmware: ",
+    insecure: "Open this installer over HTTPS or at http://localhost. Opening index.html directly cannot access MIDI.",
+    nomidi: "This browser cannot do it. Open the page in Chrome or Edge.", loadfail: "Could not load: ",
+    start: "Starting", verify: "Verifying", loader: "Switching to update mode", write: "Writing",
+    reboot: "Restarting", done: "Done", stopped: "Stopped. Replug the USB cable and press Install again.",
+    error: "Error: ",
+    denied: "MIDI (SysEx) access was not allowed. Allow MIDI in the site settings (address bar) and press Install again.",
+    notfound: "FM-1 not found. Check the USB cable (a data cable), close other apps that use MIDI, and press Install again.",
+    model: "The connected device is not an FM-1.",
+    lost: "The USB connection was lost. Replug it and press Install again.",
+    noloader: "The FM-1 in update mode was not found. Replug the USB cable and press Install again (it stays in update mode until it is finished).",
+    noreturn: "The FM-1 did not come back. Power-cycle it.",
+    mismatch: "Written, but the FM-1 reports another version: ",
+    badreq: "The FM-1 asked for data outside the package. Replug the USB cable and press Install again.",
+    badpkg: "The file to install is damaged. Reload the page.",
+    leave: "Writing. Do not close the page.",
+    license: "more chords! / ChoralRoot FM1: GPL-3.0, no warranty. Upstream source:",
+    sndTitle: "Sounds",
+    sndText: "Each of the 64 user sounds (U01 to U64) can be saved as its own small .json file: the sound and, for a VA, FM6 or CZ-1 sound, its patch. Import puts a sound file into any slot (edit the name in the file to rename the sound), Rename and Delete change one slot. Only the parts that change are written; the FM-1 keeps playing. Needs compatible ChoralRoot / more chords! firmware.",
+    sndAll: "Back up (above) saves everything at once: all the sounds, the loops and the settings. The Sounds are for single sounds, to keep, share or move between slots.",
+    sndReadGo: "Read sounds",
+    sndColSlot: "Slot", sndColName: "Name", sndColEngine: "Engine", sndColPatch: "Patch", sndColPool: "Preset",
+    sndEmpty: "empty", sndNoPatch: "no patch", sndOver: "over {at} {name}", sndAdded: "added",
+    sndExport: "Export", sndImport: "Import", sndRename: "Rename", sndDelete: "Delete",
+    sndNeedCr: "The Sounds need ChoralRoot on the FM-1 (this firmware does not keep its sounds this way). Back up and Restore work on it.",
+    sndReading: "Reading the sounds ", sndRead: "Sounds read: {n} of 64 slots used.",
+    sndWriting: "Writing ", sndBusy: "Stop the loop on the FM-1 to continue writing the sound",
+    sndExported: "Sound saved: ", sndImported: "Imported into ", sndRenamed: "Renamed ", sndDeleted: "Deleted ",
+    sndOverwrite: "{slot} holds \"{name}\". Replace it with \"{new}\" from the file?",
+    sndDeleteConfirm: "Delete {slot} \"{name}\" from the FM-1? Export it first to keep it.",
+    sndRenamePrompt: "New name for {slot} (1 to 12 characters):",
+    sndBadName: "A name is 1 to 12 characters: letters, digits, symbols or spaces (no accents). Nothing was written.",
+    sndBadFile: "Not a usable sound file: ",
+    sndExportSyx: "Export .syx",
+    sndSyxText: "FM6 and CZ-1 sounds also export as .syx: a DX7 voice (Dexed and other DX7 editors) or a CZ-1 tone (Casio tools). Import takes these .syx files too (and raw DX7 / CZ-1 dumps): the voice or tone becomes the slot's sound, with every other setting at the engine's default.",
+    sndSyxSaved: ".syx saved: ",
+    sndSyxPick: "This file holds {n} voices. Which one goes into {slot}? (1 to {n})",
+    sndSyxBadPick: "Choose a voice from 1 to {n}. Nothing was written.",
+  },
+};
+const lang = "en";
+const t = (k) => TEXT[lang][k].replace("{version}", meta.version);
+let lastKey = null, lastArg = "";
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((e) => { e.textContent = t(e.dataset.t); });
+  if (lastKey) $("status").textContent = t(lastKey) + lastArg;
+}
+applyLang();
+const sayK = (k, arg = "") => { lastKey = k; lastArg = arg; $("status").textContent = t(k) + arg; };
+const say = (txt) => { lastKey = null; $("status").textContent = txt; };
+const log = (t) => { $("log").textContent += t + "\n"; };
+let image = null;
+
+let writing = false, stock = null, stockFileEpoch = 0, restoreArc = null, restoreEpoch = 0;
+let sndTable = null, sndTarget = 0;              // the Sounds: the slot table last read, the row a file is chosen for
+const midiOk = !!navigator.requestMIDIAccess && window.isSecureContext !== false;
+const lockInstaller = (on) => {
+  writing = on; $("go").disabled = on || !image; $("stock-go").disabled = on || !stock; $("stock-file").disabled = on;
+  $("stock-recovery").disabled = on; $("skip-backup").disabled = on; $("force-risk").disabled = on; $("backup-go").disabled = on || !midiOk;
+  $("restore-go").disabled = on || !midiOk || !restoreArc; $("restore-file").disabled = on;
+  $("snd-read").disabled = on || !midiOk; $("snd-file").disabled = on; renderSounds();
+};
+window.addEventListener("beforeunload", (e) => { if (writing) { e.preventDefault(); e.returnValue = t("leave"); } });
+
+// ---- backup / restore (fm1backup.js: Felucca's protocol; ChoralRoot answers it with its own objects) ----
+const coded = (code, detail = "") => Object.assign(new Error(code + (detail ? ": " + detail : "")), { code, detail });
+const pct = (d, total) => `${Math.round(d / Math.max(1, total) * 100)}%`;
+function saveJson(obj, name) {                  // -> the file name (the browser's download)
+  const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 1)], { type: "application/json" }));
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return a.download;
+}
+function saveBytes(bytes, name) {               // a binary download (.syx) -> the file name
+  const url = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return a.download;
+}
+const saveArchive = (archive) => saveJson(archive, backupFileName(archive.firmware));
+async function openBackup(up) {                 // the running FM-1 (handshake), as a backup connection
+  const dev = await up.find((id) => id.model === "FM-1");
+  if (!dev) throw coded("notfound");
+  const input = dev.link.input, output = dev.link.output; dev.link.close();
+  return new BackupConnection(input, output);
+}
+async function takeBackup(up) {                 // -> the archive, saved to a file
+  const link = await openBackup(up);
+  try {
+    const req = (r, o) => link.request(r, o), info = await deviceInfo(req);
+    if (!info) throw coded("noBackup");
+    let archive;
+    try { archive = await captureBackup(req, info.version, (d, total) => sayK("backup", pct(d, total))); }
+    catch (e) { throw /timed out/i.test(e.message) && !e.rc ? coded("noBackup", e.message) : e; }
+    sayK("backupSaved", saveArchive(archive));
+    log(`backup ${archive.firmware}: ${archive.objects.filter((o) => o.size).map((o) => objectName(o.id)).join(", ")}`);
+    return archive;
+  } finally { link.close(); }
+}
+async function restoreArchive(up, archive) {
+  const link = await openBackup(up);
+  try {
+    const req = (r, o) => link.request(r, o), info = await deviceInfo(req);
+    if (!info) throw coded("noBackup");
+    const r = await restoreBackup(req, archive, (d, total) => sayK("restoring", pct(d, total)), { onBusy: () => sayK("restoreBusy") });
+    if (info.family === "choralroot") await restartDevice(req).catch((e) => log(`restart: ${e.message}`));
+    const names = (ids) => ids.map(objectName).join(", ");
+    sayK("restored", names(r.restored) + (r.skipped.length ? t("restoreSkipped") + names(r.skipped) + ")" : ""));
+    log(`restored ${r.restored.join(" ")}; skipped ${r.skipped.join(" ") || "none"}`);
+  } finally { link.close(); }
+}
+// the running firmware (handshake identity + INFO version) -> fm1ota.js classifyFirmware, or null (no FM-1 or another
+// model: Updater.install says why)
+async function identify(up) {
+  const dev = await up.find((id) => !/^ota-/i.test(id.model));
+  if (!dev) return null;
+  const input = dev.link.input, output = dev.link.output, id = dev.id; dev.link.close();
+  if (id.model !== meta.product.split("_")[0]) return null;
+  const link = new BackupConnection(input, output);
+  let info = null;
+  try { info = await deviceInfo((r, o) => link.request(r, o)); } finally { link.close(); }
+  return { ...classifyFirmware(id.text, info && info.version), identity: id.text, version: info && info.version };
+}
+const failSay = (e) => {
+  if (e && e.code && TEXT[lang][e.code]) sayK(e.code, e.code === "noBackup" ? "" : e.detail || "");
+  else sayK("error", e && e.message);
+  log(String(e && e.stack || e));
+};
+if (midiOk) { $("backup-go").disabled = false; $("snd-read").disabled = false; }
+
+// ---- Sounds (fm1sounds.js, docs/SOUNDS.md): one user sound as a file; each action reads the seven objects afresh,
+// edits the slot, writes back only what changed (the stores, then the bank) and reads again for the table
+const tf = (k, vals) => Object.entries(vals).reduce((s, [a, v]) => s.split(`{${a}}`).join(String(v)), t(k));
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" })[c]);
+function renderSounds() {
+  if (!sndTable) return;
+  const btn = (s, act, text, on) => `<button data-act="${act}" data-slot="${s.slot}"${on && !writing ? "" : " disabled"}>${text}</button>`;
+  $("snd-rows").innerHTML = sndTable.map((s) => `<tr${s.used ? "" : ' class="empty"'}><td class="n">${s.label}</td>` +
+    `<td>${s.used ? esc(s.name) : t("sndEmpty")}</td><td>${s.used ? esc(s.engineName) : ""}</td>` +
+    `<td>${s.used ? (s.patch || (s.kind ? t("sndNoPatch") : "")) : ""}</td>` +
+    `<td>${s.bound ? esc(tf("sndOver", { at: s.bound.label, name: s.bound.name })) : s.used ? t("sndAdded") : ""}</td><td class="a">` +
+    btn(s, "export", t("sndExport"), s.used) +
+    (s.used && (s.patch === "fm6" || s.patch === "cz") ? btn(s, "export-syx", t("sndExportSyx"), true) : "") + btn(s, "import", t("sndImport"), true) +
+    btn(s, "rename", t("sndRename"), s.used) + btn(s, "delete", t("sndDelete"), s.used) + "</td></tr>").join("");
+}
+function showSounds(objs) { sndTable = parseSoundObjects(objs).slots; $("snd-table").hidden = false; renderSounds(); }
+// connect, require ChoralRoot, read the sounds (the table shown), then fn({req, info, objs, read}); locked meanwhile
+async function soundsRun(fn) {
+  if (writing) return;
+  lockInstaller(true);
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({ sysex: true }); } catch (e) { sayK("denied"); return; }
+    const link = await openBackup(new Updater(midi, log));
+    try {
+      const req = (r, o) => link.request(r, o), info = await deviceInfo(req);
+      if (!info || info.family !== "choralroot") { sayK("sndNeedCr"); log(`sounds: ${info ? info.version : "no INFO answer"}: not ChoralRoot`); return; }
+      const read = async () => { const r = await readSounds(req, (d, n) => sayK("sndReading", pct(d, n))); showSounds(r.objs); return r.objs; };
+      await fn({ req, info, read, objs: await read() });
+    } finally { link.close(); }
+  } catch (e) { failSay(e); }
+  finally { lockInstaller(false); }
+}
+async function writeSlot(ctx, slot, changed) {   // the changed objects, then the table read again from flash
+  if (!changed.length) return;
+  const label = slotLabel(slot);
+  await writeSounds(ctx.req, changed, { onProgress: (d, n) => sayK("sndWriting", `${label} … ${pct(d, n)}`), onBusy: () => sayK("sndBusy") });
+  log(`sounds: ${label}: wrote ${changed.map((c) => objectName(c.id)).join(", ")}`);
+  await ctx.read();
+}
+$("snd-read").addEventListener("click", () => soundsRun(async () => {
+  say(tf("sndRead", { n: sndTable.filter((s) => s.used).length }));
+}));
+$("snd-rows").addEventListener("click", (e) => {
+  const b = e.target && e.target.closest ? e.target.closest("button[data-act]") : null;
+  if (!b || b.disabled || writing) return;
+  const slot = Number(b.dataset.slot), label = slotLabel(slot), cur = sndTable && sndTable[slot - 1];
+  if (b.dataset.act === "import") { sndTarget = slot; $("snd-file").value = ""; $("snd-file").click(); return; }
+  if (b.dataset.act === "export") return soundsRun(async ({ objs, info }) => {
+    const file = exportSound(objs, slot, { firmware: info.version });
+    sayK("sndExported", saveJson(file, soundFileName(slot, file.name || "")));
+  });
+  if (b.dataset.act === "export-syx") return soundsRun(async ({ objs }) => {
+    const x = exportSyx(objs, slot);
+    sayK("sndSyxSaved", saveBytes(x.bytes, x.fileName));
+  });
+  if (b.dataset.act === "rename") {
+    const answer = prompt(tf("sndRenamePrompt", { slot: label }), cur ? cur.name : "");
+    if (answer === null) return;
+    const name = answer.trim();
+    if (!nameValid(name)) { sayK("sndBadName"); return; }
+    return soundsRun(async (ctx) => { await writeSlot(ctx, slot, renameSound(ctx.objs, slot, name).changed); sayK("sndRenamed", `${label}: ${name}`); });
+  }
+  if (b.dataset.act === "delete") {
+    if (!confirm(tf("sndDeleteConfirm", { slot: label, name: cur ? cur.name : "" }))) { sayK("cancelled"); return; }
+    return soundsRun(async (ctx) => { await writeSlot(ctx, slot, deleteSound(ctx.objs, slot).changed); sayK("sndDeleted", label); });
+  }
+});
+$("snd-file").addEventListener("change", async () => {
+  const file = $("snd-file").files[0], slot = sndTarget, label = slotLabel(slot || 1);
+  if (!file || !slot || writing) return;
+  // the kind by content: a JSON object -> a sound file; else a .syx (or a raw DX7 / CZ-1 dump)
+  let sound;
+  try {
+    const bytes = file.arrayBuffer ? new Uint8Array(await file.arrayBuffer()) : new TextEncoder().encode(await file.text());
+    let i = 0;
+    while (i < bytes.length && (bytes[i] === 0x20 || bytes[i] === 0x09 || bytes[i] === 0x0A || bytes[i] === 0x0D || bytes[i] === 0xEF || bytes[i] === 0xBB || bytes[i] === 0xBF)) i++;
+    if (bytes[i] === 0x7B) sound = readSoundFile(new TextDecoder().decode(bytes));
+    else {
+      const syx = parseSyx(bytes), n = syxCount(syx);
+      let pick = 1;
+      if (n > 1) {
+        const answer = prompt(tf("sndSyxPick", { n, slot: label }), "1");
+        if (answer === null) { sayK("cancelled"); return; }
+        pick = Number(answer.trim());
+        if (!Number.isInteger(pick) || pick < 1 || pick > n) { say(tf("sndSyxBadPick", { n })); return; }
+      }
+      sound = soundFromSyx(syx, pick);
+    }
+  }
+  catch (e) { sayK("sndBadFile", e.message); log(`sounds: ${e.message}`); return; }
+  return soundsRun(async (ctx) => {
+    const now = sndTable[slot - 1];                // as the FM-1 holds it now (read afresh)
+    if (now.used && !confirm(tf("sndOverwrite", { slot: label, name: now.name, new: sound.name }))) { sayK("cancelled"); return; }
+    await writeSlot(ctx, slot, importSound(ctx.objs, slot, sound).changed);
+    sayK("sndImported", `${label}: ${sound.name}`);
+  });
+});
+
+(async () => {
+  if (window.isSecureContext === false) { sayK("insecure"); return; }
+  if (!navigator.requestMIDIAccess) { sayK("nomidi"); return; }
+  try {
+    const r = await fetch(meta.pkg, { cache: "no-store" });
+    if (!r.ok) throw new Error(`${meta.pkg}: HTTP ${r.status}`);
+    const pkg = new Uint8Array(await r.arrayBuffer());
+    try { image = await validateRelease(pkg, meta); }
+    catch (e) { log(e.message); sayK("badpkg"); return; }
+    say(`more chords! ${meta.version} · ${meta.product} · SHA-256 verified`);
+    $("go").disabled = false;
+  } catch (e) { sayK("loadfail", e.message); }
+})();
+
+$("go").addEventListener("click", async () => {
+  if (writing) return;
+  lockInstaller(true);
+  let midi;
+  try { midi = await navigator.requestMIDIAccess({ sysex: true }); }
+  catch (e) { sayK("denied"); lockInstaller(false); return; }
+  try {
+    const up = new Updater(midi, log);
+    const total = 74 + 1167;
+    const step = (k, a) => {
+      log(`${k} ${a ?? ""}`);
+      if (k === "start") sayK("start");
+      if (k === "verify") { sayK("verify"); $("bar").value = (a / total) * 100; }
+      if (k === "loader") sayK("loader");
+      if (k === "write") { sayK("write"); $("bar").value = ((74 + a) / total) * 100; }
+      if (k === "reboot") sayK("reboot");
+      if (k === "done") { $("bar").value = 100; sayK("done"); }
+    };
+    const ota = await up.find((id) => /^ota-/i.test(id.model));
+    if (ota) {                                  // an interrupted update: the backup (if any) was taken before it
+      ota.link.close();
+      sayK((await up.resume(image, step, meta.product)) ? "done" : "stopped");
+    } else {
+      const fw = await identify(up);              // which firmware runs: Sloop, the 0.x betas, unknown ones are refused
+      if (fw) {
+        log(`running: ${fw.identity}${fw.version ? " " + fw.version : ""} -> ${fw.verdict} (${fw.kind})`);
+        if (fw.verdict === "refuse") {
+          if (!$("force-risk").checked) {         // the override shows only after a refusal
+            $("force-box").hidden = false; say(refusalText(fw.name)); lockInstaller(false); return;
+          }
+          if (!confirm(t("forceConfirm").replace("{name}", fw.name))) { sayK("cancelled"); lockInstaller(false); return; }
+          log(`override: installing over ${fw.name} (not supported)`);
+        }
+      }
+      let saved = null;
+      if (!$("skip-backup").checked) {          // back up first, as Felucca before the return to stock
+        try { saved = await takeBackup(up); }
+        catch (e) {                             // (no FM-1 found: the install below says why, notfound or model)
+          log(`backup: ${e.message}`);
+          if (e.code !== "notfound" && !confirm(t("noBackupConfirm") + (e.code === "noBackup" ? "" : `\n\n${e.message}`))) {
+            sayK("cancelled"); lockInstaller(false); return;
+          }
+        }
+      }
+      await up.install(image, meta.product, step);
+      // over another firmware: offer its data back (an update of ChoralRoot keeps its own flash)
+      if (saved && backupFamily(saved.firmware) !== "choralroot" && confirm(t("restoreOffer"))) await restoreArchive(up, saved);
+    }
+  } catch (e) { failSay(e); }
+  lockInstaller(false);
+});
+
+$("backup-go").addEventListener("click", async () => {
+  if (writing) return;
+  lockInstaller(true);
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({ sysex: true }); } catch (e) { sayK("denied"); return; }
+    await takeBackup(new Updater(midi, log));
+  } catch (e) { failSay(e); }
+  finally { lockInstaller(false); }
+});
+$("restore-file").addEventListener("change", async () => {
+  const epoch = ++restoreEpoch, file = $("restore-file").files[0]; restoreArc = null; lockInstaller(false);
+  if (!file) return;
+  try {
+    const arc = readBackup(await file.text());
+    if (epoch !== restoreEpoch) return;
+    restoreArc = arc; lockInstaller(false);
+    say(`${arc.firmware || "?"} · ${arc.created || ""} · ${arc.objects.filter((o) => o.size).map((o) => objectName(o.id)).join(", ")}`);
+  } catch (e) { if (epoch === restoreEpoch) sayK("badBackup", e.message); }
+});
+$("restore-go").addEventListener("click", async () => {
+  if (writing || !restoreArc) return;
+  const arc = restoreArc;
+  lockInstaller(true);
+  try {
+    if (!confirm(t("restoreConfirm"))) return;
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({ sysex: true }); } catch (e) { sayK("denied"); return; }
+    await restoreArchive(new Updater(midi, log), arc);
+  } catch (e) { failSay(e); }
+  finally { lockInstaller(false); }
+});
+
+$("stock-file").addEventListener("change", async () => {
+  const epoch = ++stockFileEpoch, file = $("stock-file").files[0]; stock = null; lockInstaller(false);
+  if (!file) return;
+  try {
+    if (file.size !== STOCK_V15_SIZE) throw new Error("FM-1 V15 / FM-1.fwsc");
+    const verified = await validateStockPackage(new Uint8Array(await file.arrayBuffer()));
+    if (epoch !== stockFileEpoch) return;
+    stock = verified; sayK("stockValid"); lockInstaller(false);
+  } catch (e) { if (epoch === stockFileEpoch) sayK("stockError", e.message); }
+});
+// the return to stock: a backup first (the stock firmware cannot use ChoralRoot's data), as Felucca's installer
+$("stock-go").addEventListener("click", async () => {
+  if (!stock || writing) return;
+  const selected = stock; lockInstaller(true);
+  try {
+    let midi;
+    try { midi = await navigator.requestMIDIAccess({sysex:true}); } catch (e) { sayK("denied"); return; }
+    const up = new Updater(midi, log);
+    const step = (k, n) => { log(`${k} ${n ?? ""}`); if (["start","verify","loader","write","reboot","done"].includes(k)) sayK(k); if (k === "done") $("bar").value = 100; };
+    const loader = await up.find(id => id.model === "ota-FM-1");
+    if (loader) {
+      loader.link.close();
+      if (!$("stock-recovery").checked) { sayK("stockNeedBackup"); return; }
+      if (!confirm(t("stockConfirm"))) return;
+      sayK(await up.resume(selected.image, step, selected.product) ? "done" : "stopped");
+    } else {
+      if (!$("stock-recovery").checked) {
+        try { await takeBackup(up); }
+        catch (e) {
+          if (e.code === "notfound") throw e;
+          log(`backup: ${e.message}`);
+          if (!confirm(t("noBackupConfirm"))) { sayK("cancelled"); return; }
+        }
+      }
+      if (!confirm(t("stockConfirm"))) return;
+      await up.install(selected.image, selected.product, step);
+    }
+  } catch (e) { failSay(e); } finally { lockInstaller(false); }
+});
+</script>
+</body>
+</html>

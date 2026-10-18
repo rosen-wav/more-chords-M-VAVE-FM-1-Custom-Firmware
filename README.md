@@ -1,10 +1,12 @@
 # more-chords-M-VAVE-FM-1-Custom-Firmware
 
-
+WEB INSTALLER
 
 https://rosen-wav.github.io/more-chords-M-VAVE-FM-1-Custom-Firmware/site/
 
+TRY IT IN YOUR BROWSER
 
+https://rosen-wav.github.io/more-chords-M-VAVE-FM-1-Custom-Firmware/site/emulator/
 
 
 more chords!

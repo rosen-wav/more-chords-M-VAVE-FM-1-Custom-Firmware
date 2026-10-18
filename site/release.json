@@ -1,12 +1,12 @@
 {
-  "version": "v48",
+  "version": "v52",
   "product": "FM-1_920",
   "size": 610297,
-  "sha256": "3917d7a3b5e9509feb4404d7ffcbf778c9933a847158a0e5a33bec181d648d58",
-  "label": "CLOUD Nine Banks + Init Preset",
+  "sha256": "8385c6037c7a9741d107e90b74ba0fffd7a5b2b0ff30ba6dac1b45382407c7f7",
+  "label": "TINES + VECTOR \u2014 Dedicated UI",
   "reportedFirmware": "ChoralRoot 0.14",
-  "firmware": "firmware/more-chords-v48-3917d7a3b5e9.fwsc",
+  "firmware": "firmware/more-chords-v52-8385c6037c7a.fwsc",
   "installer": "webapp/installer/",
-  "source": "source/more-chords-v48-source.zip",
+  "source": "source/more-chords-v52-source.zip",
   "webInstallerHardwareValidated": false
 }

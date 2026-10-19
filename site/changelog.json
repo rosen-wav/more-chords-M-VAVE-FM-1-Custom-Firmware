@@ -1,8 +1,124 @@
 [
- {"version":"v57c","title":"GRAIN, closer to hand","changes":[["IMPROVED","GRAIN is the second engine in the browser, immediately after Prophet."],["FIXED","SOURCE A/B preset selection advances one preset per encoder detent, with or without FINE."]]},
- {"version":"v57b","title":"Memory margin restored","changes":[["FIXED","Preset and graphics caches use available ordinary RAM, restoring the required 8 KiB of POOL headroom."],["PRESERVED","All 64 USER presets, 30 loop slots and full GRAIN audio buffers are retained."]]},
- {"version":"v57","title":"Meet the two sides of GRAIN","changes":[["NEW","Actual A/B buffer waveforms, source engine and preset names, generation status, Position cursor and blend display."],["NEW","Factory-preset capture from Prophet, FM6, SWARM, CLUSTER, CLOUD, VA, FM TONE, PHASE and BASS, plus eight Original source families."],["IMPROVED","GRAINS and TEXTURE pages separate playback controls; SOURCE A/B occupy the former FILTER section."],["REMOVED","GRAIN's filter DSP and filter modulation destinations. Existing filter settings no longer colour GRAIN patches."],["IMPROVED","Smaller graphics buffers and lossless glyph-cache packing reduce POOL use while preserving tested pixels."]]},
- {"version":"v56","title":"A simpler engine list","changes":[["REMOVED","DRIFT and WAVE TERRAIN, including their Morph source choices. Stored engine IDs remain reserved."],["FIXED","Opening SAVE dismisses the temporary message that could cover Init preset."]]},
- {"version":"v55","title":"GRAIN joins more chords!","changes":[["NEW","Two generated audio source buffers for GRAIN, with parameters saved in USER presets; the initial native sources were Prophet and FM6."],["NEW","64 compatible FM6 factory sounds imported from the selected FM1 SysEx bank."],["IMPROVED","VA uses four chord voices on CPU0 and two on CPU1. Bass follows note velocity during legato changes."],["REMOVED","TINES, VECTOR and CZ-1. Their stored IDs remain reserved."]]},
- {"version":"v54","title":"More musical randomization","changes":[["IMPROVED","Preset randomization focuses on timbre and avoids disruptive pitch changes while protecting native LFO and modulation settings."],["FIXED","Clearer Init preset access in SAVE and a smoother VA note start."]]}
+  {
+    "version": "v58",
+    "title": "GRAIN routing and preset initialization",
+    "changes": [
+      [
+        "FIXED",
+        "GRAIN cannot be saved or loaded as Bass, including stale USER/settings references."
+      ],
+      [
+        "PRESERVED",
+        "GRAIN is excluded from Morph."
+      ],
+      [
+        "IMPROVED",
+        "Init preset is available in the SAVE action picker and the HOME collection menu."
+      ]
+    ]
+  },
+  {
+    "version": "v57c",
+    "title": "GRAIN, closer to hand",
+    "changes": [
+      [
+        "IMPROVED",
+        "GRAIN is the second engine in the browser, immediately after Prophet."
+      ],
+      [
+        "FIXED",
+        "SOURCE A/B preset selection advances one preset per encoder detent, with or without FINE."
+      ]
+    ]
+  },
+  {
+    "version": "v57b",
+    "title": "Memory margin restored",
+    "changes": [
+      [
+        "FIXED",
+        "Preset and graphics caches use available ordinary RAM, restoring the required 8 KiB of POOL headroom."
+      ],
+      [
+        "PRESERVED",
+        "All 64 USER presets, 30 loop slots and full GRAIN audio buffers are retained."
+      ]
+    ]
+  },
+  {
+    "version": "v57",
+    "title": "Meet the two sides of GRAIN",
+    "changes": [
+      [
+        "NEW",
+        "Actual A/B buffer waveforms, source engine and preset names, generation status, Position cursor and blend display."
+      ],
+      [
+        "NEW",
+        "Factory-preset capture from Prophet, FM6, SWARM, CLUSTER, CLOUD, VA, FM TONE, PHASE and BASS, plus eight Original source families."
+      ],
+      [
+        "IMPROVED",
+        "GRAINS and TEXTURE pages separate playback controls; SOURCE A/B occupy the former FILTER section."
+      ],
+      [
+        "REMOVED",
+        "GRAIN's filter DSP and filter modulation destinations. Existing filter settings no longer colour GRAIN patches."
+      ],
+      [
+        "IMPROVED",
+        "Smaller graphics buffers and lossless glyph-cache packing reduce POOL use while preserving tested pixels."
+      ]
+    ]
+  },
+  {
+    "version": "v56",
+    "title": "A simpler engine list",
+    "changes": [
+      [
+        "REMOVED",
+        "DRIFT and WAVE TERRAIN, including their Morph source choices. Stored engine IDs remain reserved."
+      ],
+      [
+        "FIXED",
+        "Opening SAVE dismisses the temporary message that could cover Init preset."
+      ]
+    ]
+  },
+  {
+    "version": "v55",
+    "title": "GRAIN joins more chords!",
+    "changes": [
+      [
+        "NEW",
+        "Two generated audio source buffers for GRAIN, with parameters saved in USER presets; the initial native sources were Prophet and FM6."
+      ],
+      [
+        "NEW",
+        "64 compatible FM6 factory sounds imported from the selected FM1 SysEx bank."
+      ],
+      [
+        "IMPROVED",
+        "VA uses four chord voices on CPU0 and two on CPU1. Bass follows note velocity during legato changes."
+      ],
+      [
+        "REMOVED",
+        "TINES, VECTOR and CZ-1. Their stored IDs remain reserved."
+      ]
+    ]
+  },
+  {
+    "version": "v54",
+    "title": "More musical randomization",
+    "changes": [
+      [
+        "IMPROVED",
+        "Preset randomization focuses on timbre and avoids disruptive pitch changes while protecting native LFO and modulation settings."
+      ],
+      [
+        "FIXED",
+        "Clearer Init preset access in SAVE and a smoother VA note start."
+      ]
+    ]
+  }
 ]

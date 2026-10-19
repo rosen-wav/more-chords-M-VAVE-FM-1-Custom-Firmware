@@ -1,15 +1,15 @@
 {
-  "version": "v57c",
+  "version": "v58",
   "product": "FM-1_920",
   "size": 610297,
-  "sha256": "cbeed549db3ad144e71f228de391c9b0bce4fe92711ae5efae07551df278cb93",
-  "label": "GRAIN sources + waveforms + one-step presets",
+  "sha256": "7b3f9e9f81eaac6018777452d050ca4cdab4f5242b44f29f46c20ff8be61063a",
+  "label": "GRAIN chord-only + visible Init preset",
   "reportedFirmware": "ChoralRoot 0.14",
-  "firmware": "firmware/more-chords-v57c-cbeed549db3a.fwsc",
+  "firmware": "firmware/more-chords-v58-7b3f9e9f81ea.fwsc",
   "installer": "webapp/installer/",
-  "source": "source/more-chords-v57c-source.zip",
+  "source": "source/more-chords-v58-source.zip",
   "webInstallerHardwareValidated": false,
   "emulator": "emulator/",
-  "emulatorBuildId": "v57c-377dead2e296",
+  "emulatorBuildId": "v58-ebddcfd062eb",
   "changelog": "changelog.json"
 }

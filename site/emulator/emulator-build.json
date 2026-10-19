@@ -1,13 +1,13 @@
 {
   "version": "v58",
   "firmwareVersion": "ChoralRoot 58",
-  "buildId": "v58-ebddcfd062eb",
-  "sourceFingerprint": "42afd2d40d74b3c1a5f168a7057cd4c1c64e0c25920ea453463441535df9698f",
+  "buildId": "v58-c3d19ed651ca",
+  "sourceFingerprint": "999e893840b7687449aeacaa4039b716e5a036cd31ac8af4b76bae090f0cbde4",
   "assets": {
-    "index.html": "56def2fc06b8e286aba7d4c2fb1da237d66180ca61889a3336b3675a74ad1101",
-    "emu.js": "0c03138b4a713e19ccc3bfce4c35dbd7f7deb0f4beb3a59be30c06cfc5c20fc4",
+    "index.html": "33c941b8574c2105ee4400d525b5344396a9a202c7060e42d9265059d83a4784",
+    "emu.js": "c2aebdd7d4c610b5ba6910db0a8f3142afdeb51a66abc85d35f34744b5247081",
     "keymap.js": "2c49530de514e2e0c45c33ea183e541bc252c8bce8b66c2412f8a93684269a2a",
     "worklet.js": "8833bb2eea2588fc308ccbbd6aa6f9dec66aa30d3642b2e55c7d706cbdbcb108",
-    "choralroot.wasm": "2b376e1dc37b888072bfc17f9f9dc5df40d03f58daca83fa44a7d7eac15579c4"
+    "choralroot.wasm": "de14302db529f627c9b83e1365dbc750c176a2ed9fea341a56a7139232f3a1b2"
   }
 }

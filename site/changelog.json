@@ -1,5 +1,15 @@
 [
   {
+    "version": "v59",
+    "title": "GRAIN level",
+    "changes": [
+      [
+        "IMPROVED",
+        "GRAIN output raised by another 2 dB; total +5 dB over the original V58 level."
+      ]
+    ]
+  },
+  {
     "version": "v58",
     "title": "GRAIN routing and preset initialization",
     "changes": [

@@ -4,6 +4,7 @@
 // The device runs in worklet.js; before Start a copy boots here, without sound, to show its screen.
 "use strict";
 (() => {
+  const BUILD_ID = "v57c-377dead2e296";
   const { KEYMAP, BTN_ROLE, ENC_ROLE, CHORD, noteName } = globalThis.FM1;
   const $ = (id) => document.getElementById(id);
   const NS = "http://www.w3.org/2000/svg";
@@ -278,7 +279,7 @@
         x.send();
       })
     : fetch(url).then((r) => { if (!r.ok) throw new Error(url + ": " + r.status); return r.arrayBuffer(); });
-  const wasmP = getBytes("choralroot.wasm?v=54");
+  const wasmP = getBytes(`choralroot.wasm?v=${encodeURIComponent(BUILD_ID)}`);
 
   // before Start: the device boots here, silently, to show its screen (?demo: MAJ + D4 held, for screenshots)
   (async () => {
@@ -316,7 +317,7 @@
     try {
       if (!window.AudioWorkletNode) throw new Error("this browser has no AudioWorklet (try a current Chrome, Firefox or Safari)");
       const ctx = new AudioContext({ sampleRate: 44100, latencyHint: "playback" });
-      await ctx.audioWorklet.addModule("worklet.js?v=54");
+      await ctx.audioWorklet.addModule(`worklet.js?v=${encodeURIComponent(BUILD_ID)}`);
       node = new AudioWorkletNode(ctx, "choralroot-fm1", { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2] });
       node.connect(ctx.destination);
       node.port.onmessage = (e) => onWorklet(e.data);

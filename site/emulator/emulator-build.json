@@ -1,0 +1,13 @@
+{
+  "version": "v57c",
+  "firmwareVersion": "ChoralRoot 57c",
+  "buildId": "v57c-377dead2e296",
+  "sourceFingerprint": "f856e8fa257017c88f40991bc057d143d9a276f1dbcf7cc4fa19ce793af14329",
+  "assets": {
+    "index.html": "7cc1f3cd9c6b00558c62db4d414a29d2994f78547dba6f9758cbde5f0975e301",
+    "emu.js": "edc9ff1da02d24cdde266ffcb8544f19c08729b6269ce1621b4cc982d14d3b00",
+    "keymap.js": "2c49530de514e2e0c45c33ea183e541bc252c8bce8b66c2412f8a93684269a2a",
+    "worklet.js": "8833bb2eea2588fc308ccbbd6aa6f9dec66aa30d3642b2e55c7d706cbdbcb108",
+    "choralroot.wasm": "dc855a5a756308045475dda84f2cd20e3619661522d7b213f7f384c81d63c6f8"
+  }
+}

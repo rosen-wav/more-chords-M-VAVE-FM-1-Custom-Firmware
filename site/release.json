@@ -1,12 +1,15 @@
 {
-  "version": "v54",
+  "version": "v57c",
   "product": "FM-1_920",
   "size": 610297,
-  "sha256": "acb1521a51fdbac8e626fac661d97cbcc04efc90c15f9f0167101c79a65e3700",
-  "label": "Musical Randomizer + VA Smooth + TINES/VECTOR Character",
+  "sha256": "cbeed549db3ad144e71f228de391c9b0bce4fe92711ae5efae07551df278cb93",
+  "label": "GRAIN sources + waveforms + one-step presets",
   "reportedFirmware": "ChoralRoot 0.14",
-  "firmware": "firmware/more-chords-v54-acb1521a51fd.fwsc",
+  "firmware": "firmware/more-chords-v57c-cbeed549db3a.fwsc",
   "installer": "webapp/installer/",
-  "source": "source/more-chords-v54-source.zip",
-  "webInstallerHardwareValidated": false
+  "source": "source/more-chords-v57c-source.zip",
+  "webInstallerHardwareValidated": false,
+  "emulator": "emulator/",
+  "emulatorBuildId": "v57c-377dead2e296",
+  "changelog": "changelog.json"
 }

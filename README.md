@@ -27,10 +27,6 @@ CLUSTER — Adapted from ORBIT. Up to seven oscillators, with phase feedback, dr
 
 CLOUD — An oscillator-based granular engine adapted from ORBIT. It creates grains from synthesized waveforms rather than samples, with two grains per voice. Includes Size, Density, Spread, Detune, Chirp, Stack and Tone controls, plus additional wavetable banks.
 
-DRIFT — An original more chords! engine with five detuned oscillators, independent slow drift and phase modulation. Controls include Spread, Drift, Density, Tone, Rate, Phase, Round and Tilt.
-
-WAVE TERRAIN — An original more chords! engine that generates sound by moving along two-dimensional paths across sonic surfaces. Includes Terrain, Orbit, Motion, Depth, X/Y Shift, Skew and Smooth controls, with smoothed terrain and position changes.
-
 FM6 — A DX7-inspired six-operator FM engine inherited through ChoralRoot and Melodee, using Dexed-derived synthesis.
 
 FM TONE — ChoralRoot’s QUAD engine: an original Digitone-inspired four-operator FM implementation.

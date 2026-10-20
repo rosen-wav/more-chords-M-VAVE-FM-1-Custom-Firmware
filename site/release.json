@@ -1,15 +1,15 @@
 {
-  "version": "v60",
+  "version": "v61",
   "product": "FM-1_920",
   "size": 610297,
-  "sha256": "dae2bae15f1404d236d7c047498e90f827abaa17a935f04aa493f2a1bdbe79a2",
-  "label": "GRAIN Gain + Spray +2 dB",
+  "sha256": "e17e00294181520c6159ae054e660552c39373a244142934f38ee51cb4e7f65f",
+  "label": "64 original generic FM6 presets",
   "reportedFirmware": "ChoralRoot 0.14",
-  "firmware": "firmware/more-chords-v60-dae2bae15f14.fwsc",
+  "firmware": "firmware/more-chords-v61-e17e00294181.fwsc",
   "installer": "webapp/installer/",
-  "source": "source/more-chords-v60-source.zip",
+  "source": "source/more-chords-v61-source.zip",
   "webInstallerHardwareValidated": false,
   "emulator": "emulator/",
-  "emulatorBuildId": "v60-628676c48f76",
+  "emulatorBuildId": "v61-46cc94e469b8",
   "changelog": "changelog.json"
 }

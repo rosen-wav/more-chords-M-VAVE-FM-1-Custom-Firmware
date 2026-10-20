@@ -113,3 +113,7 @@ adapted from Melodee 1.1.0 `firmware/src/fx.c`, under GPL-3.0-only.
 `tests/melodee_hall_reference.h` preserves that render as an independent
 reference with symbol remapping. The adaptation retains the half-rate FDN,
 fractional modulation, input high-pass, decay gains, rounding and stereo output.
+
+## V61 original generic FM6 bank
+
+The current 64 FM6 factory patches are generated from the original numeric recipes in `tools/fm6_generic_factory.py`, under GPL-3.0-only. They do not use the previously supplied SYX bank or Bobby Blues collection. The external bank file and import report are removed from this release. Existing upstream synthesis code/INIT and other component notices retain their own attribution and licenses. Historical V55 documentation describing the old import does not describe the current factory bank.

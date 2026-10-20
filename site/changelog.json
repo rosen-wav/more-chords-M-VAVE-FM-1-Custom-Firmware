@@ -1,5 +1,19 @@
 [
   {
+    "version": "v61",
+    "title": "Original generic FM6 factory bank",
+    "changes": [
+      [
+        "NEW",
+        "64 original generic FM6 factory sounds: EP, Bell, Bass, Brass, Pad, Mallet, Organ and Pluck."
+      ],
+      [
+        "REMOVED",
+        "Previously imported user bank removed from firmware and distributed source archives."
+      ]
+    ]
+  },
+  {
     "version": "v60",
     "title": "GRAIN Gain and Spray",
     "changes": [

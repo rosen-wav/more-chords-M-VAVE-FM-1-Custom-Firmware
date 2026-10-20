@@ -4,7 +4,7 @@
 // The device runs in worklet.js; before Start a copy boots here, without sound, to show its screen.
 "use strict";
 (() => {
-  const BUILD_ID = "v59-7f18b9e8ccae";
+  const BUILD_ID = "v60-628676c48f76";
   const { KEYMAP, BTN_ROLE, ENC_ROLE, CHORD, noteName } = globalThis.FM1;
   const $ = (id) => document.getElementById(id);
   const NS = "http://www.w3.org/2000/svg";

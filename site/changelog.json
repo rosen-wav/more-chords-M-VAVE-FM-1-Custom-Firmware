@@ -1,5 +1,19 @@
 [
   {
+    "version": "v60",
+    "title": "GRAIN Gain and Spray",
+    "changes": [
+      [
+        "IMPROVED",
+        "Another +2 dB on GRAIN, +7 dB total over original V58."
+      ],
+      [
+        "NEW",
+        "TEXTURE: GAIN replaces RAND; SPRAY replaces PITCH. Gain is ramped, Spray disperses read position without pitch detuning."
+      ]
+    ]
+  },
+  {
     "version": "v59",
     "title": "GRAIN level",
     "changes": [
